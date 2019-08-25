@@ -78,7 +78,7 @@ strings, *2* - tuple of tuples of strings. Read pydoc for more info.
 Generates a ready to output table. Support basic formats:
 
 ```python
-table = rapidtables.make_table(table, tablefmt='raw')
+table = rapidtables.make_table(data, tablefmt='raw')
 ```
 ```
 name  salary  job
@@ -89,7 +89,7 @@ Ken     1800  Q/A
 ```
 
 ```python
-table = rapidtables.make_table(table, tablefmt='simple')
+table = rapidtables.make_table(data, tablefmt='simple')
 ```
 ```
 name  salary  job
@@ -100,7 +100,7 @@ Ken     1800  Q/A
 ``` 
 
 ```python
-table = rapidtables.make_table(table, tablefmt='md') # Markdown
+table = rapidtables.make_table(data, tablefmt='md') # Markdown
 ```
 ```
 | name | salary | job       |
@@ -111,7 +111,7 @@ table = rapidtables.make_table(table, tablefmt='md') # Markdown
 ```
 
 ```python
-table = rapidtables.make_table(table, tablefmt='rst') # reStructured Text
+table = rapidtables.make_table(data, tablefmt='rst') # reStructured Text
 ```
 ```
 ====  ======  =========
