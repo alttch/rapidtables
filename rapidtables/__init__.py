@@ -143,7 +143,7 @@ def format_table(table,
         # add body
         lv0 = len(vals[0])
         if fmt == OUTPUT_RAW:
-            result += '\n'.join(body_generator(False))
+            result += '\n'.join(body_generator())
         else:
             result = body_generator()
         if generate_header and body_sep:
