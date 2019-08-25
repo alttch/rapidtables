@@ -4,6 +4,8 @@
 lists of dictionaries to pre-formatted tables. And it does the job as fast as
 possible.
 
+<img src="https://img.shields.io/pypi/v/rapidtables.svg" /> <img src="https://img.shields.io/badge/license-MIT-green" /> <img src="https://img.shields.io/badge/python-2.7%20%7C%203.5%20%7C%203.6%20%7C%203.7-blue.svg" />
+
 **rapidtables** is focused on speed and is useful for applications which
 dynamically refresh data in console. The module code is heavily optimized, it
 uses only tuples inside and on the relatively small tables (<2000 records) it
