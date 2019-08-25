@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.31'
+__version__ = '0.0.32'
 
 OUTPUT_RAW = 0
 OUTPUT_GENERATOR = 1
@@ -53,7 +53,6 @@ def format_table(table,
         key_lengths = ()
         if not calign: key_isalpha = ()
         need_body_sep = body_sep is not None
-        vals = ()
         if fmt == OUTPUT_RAW:
             result = ''
         # dig
