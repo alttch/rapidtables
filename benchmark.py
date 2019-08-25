@@ -11,7 +11,7 @@ import rapidtables
 import tabulate
 import pandas
 
-num = 100
+num = 1000
 table = []
 
 pandas.options.display.max_colwidth = 50
