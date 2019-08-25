@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.33'
+__version__ = '0.0.34'
 
 OUTPUT_RAW = 0
 OUTPUT_GENERATOR = 1
@@ -62,14 +62,12 @@ def format_table(table,
                 hklen = len(headers[ki]) if headers else len(k)
             klen = 0
             for ri, r in enumerate(table):
-                ivalue = r.get(k)
-                value = str(ivalue) if ivalue is not None else ''
+                value = r.get(k)
                 if value is not None:
-                    klen = max(klen, len(value))
-                if not alpha:
-                    if ivalue is not None:
+                    klen = max(klen, len(str(value)))
+                    if not (calign and alpha):
                         try:
-                            float(ivalue)
+                            float(value)
                         except:
                             alpha = True
             if generate_header:

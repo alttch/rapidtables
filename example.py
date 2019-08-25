@@ -47,7 +47,7 @@ for r in rows:
 
 print('')
 
-# print raw
+# print raw, don't align numbers to right for rst
 for fmt in ('raw', 'simple', 'md', 'rst'):
-    print_table(data, tablefmt=fmt)
+    print_table(data, tablefmt=fmt, align=0 if fmt=='rst' else 1)
     print('')
