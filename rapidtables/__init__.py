@@ -6,6 +6,10 @@ OUT_RAW = 0
 OUT_TUPLE = 1
 OUT_TT = 2
 
+TABLEFMT_SIMPLE = 1
+TABLEFMT_MD = 2
+TABLEFMT_RST = 3
+
 
 def format_table(table,
                  fmt=0,
@@ -41,7 +45,7 @@ def format_table(table,
         keys = tuple(table[0])
         len_keys = len(keys)
         lkr = range(len_keys)
-        len_keysn = len(keys) - 1
+        len_keysn = len_keys - 1
         key_lengths = ()
         if not calign: key_isalpha = ()
         need_body_sep = body_sep is not None
@@ -171,14 +175,17 @@ def make_table(table, tablefmt='simple', headers=None, align=1):
             body_sep = '-'
             separator = '  '
             body_sep_fill = '  '
+            tfmt = TABLEFMT_SIMPLE
         elif tablefmt == 'md':
             body_sep = '-'
             separator = ' | '
             body_sep_fill = '-|-'
+            tfmt = TABLEFMT_MD
         elif tablefmt == 'rst':
             body_sep = '='
             separator = '  '
             body_sep_fill = '  '
+            tfmt = TABLEFMT_RST
         else:
             raise RuntimeError('table format not supported')
         t = format_table(table,
@@ -188,14 +195,14 @@ def make_table(table, tablefmt='simple', headers=None, align=1):
                          separator=separator,
                          body_sep_fill=body_sep_fill,
                          body_sep=body_sep)
-        if tablefmt == 'simple':
-            return t[0] + '\n' + t[1] + '\n' + '\n'.join(t[2])
-        elif tablefmt == 'md':
+        if tfmt == TABLEFMT_MD:
             h = '|-' + t[1] + '-|\n| '
             return '| ' + t[0] + ' |\n' + h + ' |\n| '.join(t[2]) + ' |'
-        if tablefmt == 'rst':
+        elif tfmt == TABLEFMT_RST:
             return t[1] + '\n' + t[0] + '\n' + t[1] + '\n' + '\n'.join(
                 t[2]) + '\n' + t[1]
+        if tfmt == TABLEFMT_SIMPLE:
+            return t[0] + '\n' + t[1] + '\n' + '\n'.join(t[2])
 
 
 def print_table(table, tablefmt='simple', headers=None, align=1):
