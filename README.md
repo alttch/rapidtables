@@ -16,6 +16,9 @@ colorize every single column.
 ## Example
 
 ```python
+from rapidtables import format_table
+from termcolor import colored
+
 header, cols = format_table(data, fmt=2) # data is list of dicts
 spacer = '  '
 print(colored(spacer.join(header), color='blue'))
