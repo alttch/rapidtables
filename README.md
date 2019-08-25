@@ -1,8 +1,8 @@
 # rapidtables
 
 **rapidtables** is a module for Python 2/3, which does only one thing: converts
-lists of dictionaries to pre-formatted ascii tables. And it does the job as
-fast as possible.
+lists of dictionaries to pre-formatted tables. And it does the job as fast as
+possible.
 
 **rapidtables** is focused on speed and is useful for applications which
 dynamically refresh data in console. The module code is heavily optimized, it
