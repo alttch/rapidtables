@@ -1,3 +1,8 @@
+OUT_RAW = 0
+OUT_TUPLE = 1
+OUT_TT = 2
+
+
 def format_table(table,
                  fmt=0,
                  headers=None,
@@ -8,6 +13,8 @@ def format_table(table,
                  body_sep_fill='  '):
     '''
     Format list of dicts to table
+
+    If headers are not specified, dict keys MUST be strings
 
     Args:
         table: list or tuple of dicts
@@ -146,6 +153,8 @@ def make_table(table, tablefmt='simple', headers=None, align=1):
     '''
     Generates ready-to-output table
 
+    If headers are not specified, dict keys MUST be strings
+
     Args:
         table: list or tuple of dicts
         tablefmt: raw, simple (default), md (markdown) or rst (reStructuredText)
@@ -185,3 +194,10 @@ def make_table(table, tablefmt='simple', headers=None, align=1):
         if tablefmt == 'rst':
             return t[1] + '\n' + t[0] + '\n' + t[1] + '\n' + '\n'.join(
                 t[2]) + '\n' + t[1]
+
+
+def print_table(table, tablefmt='simple', headers=None, align=1):
+    '''
+    Same as make_table but prints results to stdout
+    '''
+    print(make_table(table, tablefmt=tablefmt, headers=headers, align=align))
