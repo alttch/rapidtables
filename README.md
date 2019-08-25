@@ -40,15 +40,18 @@ for r in rows:
 ![colorized table](https://github.com/alttch/rapidtables/blob/master/colored.png?raw=true)
 
 Pretty cool, isn't it? Actually, it was the most complex example, you can
-make just
+work with header + table rows already joined:
 
 ```python
 header, rows = format_table(data, fmt=1)
+print(colored(header, color='blue'))
+print(colored('-' * len(header), color='grey'))
+for r in rows:
+    print(colored(r, color='yellow'))
 ```
 
-and obtain header + table rows already joined. Or you can use *make_table*
-function to return the table out-of-the-box (or *print_table* to instantly
-print it), and print it in raw:
+Or you can use *make_table* function to return the table out-of-the-box (or
+*print_table* to instantly print it), and print it in raw:
 
 ```python
 print_table(data)

@@ -1,14 +1,14 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.13'
+__version__ = '0.0.14'
 
 OUT_RAW = 0
 OUT_TUPLE = 1
 OUT_TT = 2
 
-TABLEFMT_SIMPLE = 1
-TABLEFMT_MD = 2
-TABLEFMT_RST = 3
+_TABLEFMT_SIMPLE = 1
+_TABLEFMT_MD = 2
+_TABLEFMT_RST = 3
 
 
 def format_table(table,
@@ -173,17 +173,17 @@ def make_table(table, tablefmt='simple', headers=None, align=1):
             body_sep = '-'
             separator = '  '
             body_sep_fill = '  '
-            tfmt = TABLEFMT_SIMPLE
+            tfmt = _TABLEFMT_SIMPLE
         elif tablefmt == 'md':
             body_sep = '-'
             separator = ' | '
             body_sep_fill = '-|-'
-            tfmt = TABLEFMT_MD
+            tfmt = _TABLEFMT_MD
         elif tablefmt == 'rst':
             body_sep = '='
             separator = '  '
             body_sep_fill = '  '
-            tfmt = TABLEFMT_RST
+            tfmt = _TABLEFMT_RST
         else:
             raise RuntimeError('table format not supported')
         t = format_table(table,
@@ -193,13 +193,13 @@ def make_table(table, tablefmt='simple', headers=None, align=1):
                          separator=separator,
                          body_sep_fill=body_sep_fill,
                          body_sep=body_sep)
-        if tfmt == TABLEFMT_MD:
+        if tfmt == _TABLEFMT_MD:
             h = '|-' + t[1] + '-|\n| '
             return '| ' + t[0] + ' |\n' + h + ' |\n| '.join(t[2]) + ' |'
-        elif tfmt == TABLEFMT_RST:
+        elif tfmt == _TABLEFMT_RST:
             return t[1] + '\n' + t[0] + '\n' + t[1] + '\n' + '\n'.join(
                 t[2]) + '\n' + t[1]
-        if tfmt == TABLEFMT_SIMPLE:
+        if tfmt == _TABLEFMT_SIMPLE:
             return t[0] + '\n' + t[1] + '\n' + '\n'.join(t[2])
 
 
