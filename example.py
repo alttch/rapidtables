@@ -41,4 +41,6 @@ for r in rows:
 print()
 
 # print raw
-print_table(data)
+for fmt in ('raw', 'simple', 'md', 'rst'):
+    print_table(data, tablefmt=fmt)
+    print()
