@@ -115,8 +115,12 @@ def format_table(table,
         for v in range(len(vals[0])):
             if fmt == OUT_TT:
                 row = ()
+                ntpl = True
             elif fmt == OUT_TUPLE:
                 row = ''
+                ntpl = True
+            else:
+                ntpl = False
             for i in lkr:
                 if calign or key_isalpha[i]:
                     r = vals[i][v].ljust(key_lengths[i])
@@ -131,7 +135,7 @@ def format_table(table,
                         row += r
                 else:
                     result += r + separator
-            if fmt == OUT_TT or fmt == OUT_TUPLE:
+            if ntpl:
                 result += (row,)
             else:
                 result += '\n'
