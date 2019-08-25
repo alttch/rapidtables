@@ -13,10 +13,15 @@ data = [
         'job': 'Architect'
     },
     {
+        'name': 'Diana',
+        'salary': None,
+        'job': 'Student'
+    },
+    {
         'name': 'Ken',
         'salary': 1800,
         'job': 'Q/A'
-    },
+    }
 ]
 
 # colorize every single column
