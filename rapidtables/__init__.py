@@ -183,8 +183,8 @@ def make_table(table, tablefmt='simple', headers=None, align=1):
         if tablefmt == 'simple':
             return t[0] + '\n' + t[1] + '\n' + '\n'.join(t[2])
         elif tablefmt == 'md':
-            h = '|-' + t[1] + '\n| '
-            return '| ' + t[0] + '\n' + h + '\n| '.join(t[2])
+            h = '|-' + t[1] + '-|\n| '
+            return '| ' + t[0] + ' |\n' + h + ' |\n| '.join(t[2]) + ' |'
         if tablefmt == 'rst':
             return t[1] + '\n' + t[0] + '\n' + t[1] + '\n' + '\n'.join(
                 t[2]) + '\n' + t[1]
