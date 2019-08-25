@@ -79,7 +79,7 @@ Ken     1800  Q/A
 ### format_table
 
 Formats a table. Outputs data in raw, generator of strings (one string per row)
-or generator of tuples of strings (one tuple per row, one string per column),
+or generator of tuples of strings (one tuple per row, one string per column):
 
 * **fmt=0** raw string
 * **fmt=1** generator of strings
