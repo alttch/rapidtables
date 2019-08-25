@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.32'
+__version__ = '0.0.33'
 
 OUTPUT_RAW = 0
 OUTPUT_GENERATOR = 1
@@ -137,11 +137,11 @@ def format_table(table,
                         r = ' ' * key_lengths[i]
                     if fmt == OUTPUT_GENERATOR_TUPLES:
                         row += (r,)
-                    elif fmt == OUTPUT_GENERATOR:
-                        if i < len_keysn:
-                            row += r + separator
-                        else:
-                            row += r
+                    # OUTPUT_GENERATOR
+                    elif i < len_keysn:
+                        row += r + separator
+                    else:
+                        row += r
                 yield row
 
         # add body
