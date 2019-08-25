@@ -108,15 +108,9 @@ def format_table(table,
                     if need_body_sep:
                         bsep += ('-' * key_lengths[i],)
                     if calign or key_isalpha[i]:
-                        if i < len_keysn:
-                            header += (ht.ljust(key_lengths[i]) + separator,)
-                        else:
-                            header += (ht.ljust(key_lengths[i]),)
+                        header += (ht.ljust(key_lengths[i]),)
                     else:
-                        if i < len_keysn:
-                            header += (ht.rjust(key_lengths[i]) + separator,)
-                        else:
-                            header += (ht.rjust(key_lengths[i]),)
+                        header += (ht.rjust(key_lengths[i]),)
         # add body
         for v in range(len(vals[0])):
             if fmt == OUT_TT:
