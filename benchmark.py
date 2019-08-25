@@ -34,11 +34,14 @@ def test_pandas():
     return df.fillna(' ').to_string()
 
 
-print('Benchmarking, results are in ' + colored('milliseconds', color='yellow'))
+print('Benchmarking')
 print()
 
 for rec in (10, 100, 1000):
-    print(colored(str(rec), color='white', attrs=['bold']), 'records table\n')
+    print(
+        colored(str(rec), color='white',
+                attrs=['bold']), 'records table, average render (' +
+        colored('milliseconds', color='yellow') + ')\n')
     table.clear()
     for i in range(rec):
         table.append({
@@ -67,7 +70,7 @@ for rec in (10, 100, 1000):
     f2 = '{:.1f}'.format(result_pandas / result_rapidtables)
     fg = partial(colored, color='green', attrs=['bold'])
     print('{}: x{} faster than tabulate, x{} faster than pandas'.format(
-        fg('rapidtables'), fg(f1), fg(f2)))
+        colored('rapidtables', color='red', attrs=['bold']), fg(f1), fg(f2)))
     print('=' * (os.get_terminal_size(0)[0] - 10))
     print()
 
