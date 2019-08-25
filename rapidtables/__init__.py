@@ -4,7 +4,7 @@ __version__ = '0.0.23'
 
 OUTPUT_RAW = 0
 OUTPUT_GENERATOR = 1
-OUT_GENERATOR_TUPLES = 2
+OUTPUT_GENERATOR_TUPLES = 2
 
 _TABLEFMT_SIMPLE = 1
 _TABLEFMT_MD = 2
@@ -122,7 +122,7 @@ def format_table(table,
 
         def body_generator():
             for v in range(lv0):
-                if fmt == OUT_GENERATOR_TUPLES:
+                if fmt == OUTPUT_GENERATOR_TUPLES:
                     row = ()
                 else:
                     row = ''
@@ -131,7 +131,7 @@ def format_table(table,
                         r = vals[i][v].ljust(key_lengths[i])
                     else:
                         r = vals[i][v].rjust(key_lengths[i])
-                    if fmt == OUT_GENERATOR_TUPLES:
+                    if fmt == OUTPUT_GENERATOR_TUPLES:
                         row += (r,)
                     elif fmt == OUTPUT_GENERATOR:
                         if i < len_keysn:
