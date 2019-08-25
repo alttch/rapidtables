@@ -144,6 +144,8 @@ The same as *make_table*, but prints table to stdout.
 
 ## Benchmarks
 
+(Python 3.7)
+
 ![benchmark](https://github.com/alttch/rapidtables/blob/master/benchmark.png?raw=true)
 
 Enjoy!
