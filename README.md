@@ -6,8 +6,8 @@ possible.
 
 **rapidtables** is focused on speed and is useful for applications which
 dynamically refresh data in console. The module code is heavily optimized, it
-uses only tuples inside and on a relatively small tables (<2000 records) it
-renders them even faster than Pandas.
+uses only tuples inside and on the relatively small tables (<2000 records) it
+renders even faster than Pandas.
 
 And unlike other similar modules, **rapidtables** can output pre-formatted
 tuples of strings or even tuples of tuples of strings, which allows you to
