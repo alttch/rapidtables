@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# if you need to keep strict column ordering, use OrderedDicts for the rows
 data = [{
     'name': 'John',
     'salary': 2000,
@@ -27,10 +28,11 @@ spacer = '  '
 print(colored(spacer.join(header), color='blue'))
 print(colored('-' * sum([(len(x) + 2) for x in header]), color='grey'))
 for r in rows:
-    print(colored(r[0], color='white', attrs=['bold']) + spacer, end='')
-    print(colored(r[1], color='cyan') + spacer, end='')
-    print(colored(r[2], color='yellow'))
-
+    cols = (
+        (colored(r[0], color='white', attrs=['bold'])),
+        (colored(r[1], color='cyan')),
+        (colored(r[2], color='yellow')))
+    print(spacer.join(cols))
 print()
 
 # colorize only rows, custom header

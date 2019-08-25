@@ -24,6 +24,7 @@ pip install rapidtables
 ## Example
 
 ```python
+# if you need to keep strict column ordering, use OrderedDicts for the rows
 data = [
     { 'name': 'John', 'salary': 2000, 'job': 'DevOps' },
     { 'name': 'Jack', 'salary': 2500, 'job': 'Architect' },
@@ -34,7 +35,7 @@ data = [
 from rapidtables import format_table
 from termcolor import colored
 
-header, rows = format_table(data, fmt=2) # data is list of dicts
+header, rows = format_table(data, fmt=2)
 spacer = '  '
 print(colored(spacer.join(header), color='blue'))
 print(colored('-' * sum([(len(x) + 2) for x in header]), color='grey'))
