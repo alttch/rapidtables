@@ -8,7 +8,7 @@ def format_table(table,
                  headers=None,
                  separator='  ',
                  align=1,
-                 make_header=True,
+                 generate_header=True,
                  body_sep=None,
                  body_sep_fill='  '):
     '''
@@ -22,15 +22,15 @@ def format_table(table,
         headers: list or tuple of headers (default: dict keys)
         separator: cell separator (default: "  ")
         align: 0 - no align, 1 - align decimals to right (default)
-        make_header: True (default) - create and return header
+        generate_header: True (default) - create and return header
         body_sep: char to use as body separator (default: None)
         body_sep_fill: string used to fill body separator to next col
 
     Returns:
-        result if make_header is False and body_sep is None
-        (header, result) if make_header is True and body_sep is None
-        (header, body sep., result) if make_header is True and body_sep is not
-                                    None
+        result if generate_header is False and body_sep is None
+        (header, result) if generate_header is True and body_sep is None
+        (header, body sep., result) if generate_header is True and body_sep is
+                                    not None
     '''
     calign = align == 0
     if table:
@@ -49,7 +49,7 @@ def format_table(table,
         # dig
         for ki, k in enumerate(keys):
             v = ()
-            if make_header:
+            if generate_header:
                 klen = len(headers[ki]) if headers else len(k)
             for ri, r in enumerate(table):
                 alpha = False
@@ -63,7 +63,7 @@ def format_table(table,
                     else:
                         alpha = True
                 v += (str(value) if value is not None else '',)
-            if make_header:
+            if generate_header:
                 key_lengths += (max(klen, len(max(v, key=len))),)
             else:
                 key_lengths += (len(max(v, key=len)),)
@@ -71,7 +71,7 @@ def format_table(table,
             vals += (v,)
         # output
         # add header
-        if make_header:
+        if generate_header:
             if fmt == OUT_RAW or fmt == OUT_TUPLE:
                 header = ''
                 if need_body_sep:
@@ -135,9 +135,9 @@ def format_table(table,
                 result += (row,)
             else:
                 result += '\n'
-        if make_header and body_sep:
+        if generate_header and body_sep:
             return (header, bsep, result)
-        elif make_header:
+        elif generate_header:
             return (header, result)
         else:
             return result
