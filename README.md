@@ -12,8 +12,8 @@ uses only tuples inside and on the relatively small tables (<2000 records) it
 renders even faster than Pandas.
 
 And unlike other similar modules, **rapidtables** can output pre-formatted
-tuples of strings or even tuples of tuples of strings, which allows you to
-colorize every single column.
+generators of strings or even generators of tuples of strings, which allows you
+to colorize every single column.
 
 ## Install
 
