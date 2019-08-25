@@ -11,7 +11,7 @@ import rapidtables
 import tabulate
 import pandas
 
-num = 1000
+num = 100
 table = []
 
 pandas.options.display.max_colwidth = 50
@@ -37,7 +37,7 @@ def test_pandas():
 print('Benchmarking')
 print()
 
-for rec in (10, 100, 1000):
+for rec in (30, 300, 3000, 30000):
     print(
         colored(str(rec), color='white',
                 attrs=['bold']), 'records table, average render (' +
@@ -56,21 +56,25 @@ for rec in (10, 100, 1000):
     outs = '{:.3f}'
     result_rapidtables = timeit.timeit(stmt=test_rapidtables,
                                        number=num) / num * 1000
-    result_tabulate = timeit.timeit(stmt=test_tabulate, number=num) / num * 1000
     result_pandas = timeit.timeit(stmt=test_pandas, number=num) / num * 1000
     result['rapidtables'] = outs.format(result_rapidtables)
-    result['tabulate'] = outs.format(result_tabulate)
+    if rec <= 3000:
+        result_tabulate = timeit.timeit(stmt=test_tabulate,
+                                        number=num) / num * 1000
+        result['tabulate'] = outs.format(result_tabulate)
+        f1 = '{:.1f}'.format(result_tabulate / result_rapidtables)
     result['pandas'] = outs.format(result_pandas)
+    f2 = '{:.1f}'.format(result_pandas / result_rapidtables)
     raw = rapidtables.format_table([result], fmt=1)
     print(colored(raw[0], color='blue'))
     print(colored('-' * len(raw[0]), color='grey'))
     print(colored('\n'.join(raw[1]), color='yellow'))
     print()
-    f1 = '{:.1f}'.format(result_tabulate / result_rapidtables)
-    f2 = '{:.1f}'.format(result_pandas / result_rapidtables)
     fg = partial(colored, color='green', attrs=['bold'])
-    print('{}: x{} faster than tabulate, x{} faster than pandas'.format(
-        colored('rapidtables', color='red', attrs=['bold']), fg(f1), fg(f2)))
+    print(colored('rapidtables', color='red', attrs=['bold']) + ': ', end='')
+    if rec <= 3000:
+        print('{}x faster than tabulate, '.format(fg(f1)), end='')
+    print('{}x faster than pandas'.format(fg(f2)))
     print('=' * (os.get_terminal_size(0)[0] - 10))
     print()
 
