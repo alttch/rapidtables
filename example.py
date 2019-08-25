@@ -1,27 +1,22 @@
 #!/usr/bin/env python3
 
-data = [
-    {
-        'name': 'John',
-        'salary': 2000,
-        'job': 'DevOps'
-    },
-    {
-        'name': 'Jack',
-        'salary': 2500,
-        'job': 'Architect'
-    },
-    {
-        'name': 'Diana',
-        'salary': None,
-        'job': 'Student'
-    },
-    {
-        'name': 'Ken',
-        'salary': 1800,
-        'job': 'Q/A'
-    }
-]
+data = [{
+    'name': 'John',
+    'salary': 2000,
+    'job': 'DevOps'
+}, {
+    'name': 'Jack',
+    'salary': 2500,
+    'job': 'Architect'
+}, {
+    'name': 'Diana',
+    'salary': None,
+    'job': 'Student'
+}, {
+    'name': 'Ken',
+    'salary': 1800,
+    'job': 'Q/A'
+}]
 
 from rapidtables import format_table, print_table
 from termcolor import colored
@@ -38,8 +33,10 @@ for r in rows:
 
 print()
 
-# colorize only rows
-header, rows = format_table(data, fmt=1)
+# colorize only rows, custom header
+header, rows = format_table(data,
+                            headers=('first name', 'income', 'position'),
+                            fmt=1)
 print(colored(header, color='blue'))
 print(colored('-' * len(header), color='grey'))
 for r in rows:

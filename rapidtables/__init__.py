@@ -1,10 +1,10 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.22'
+__version__ = '0.0.23'
 
-OUT_RAW = 0
-OUT_TUPLE = 1
-OUT_TT = 2
+OUTPUT_RAW = 0
+OUTPUT_GENERATOR = 1
+OUT_GENERATOR_TUPLES = 2
 
 _TABLEFMT_SIMPLE = 1
 _TABLEFMT_MD = 2
@@ -26,7 +26,8 @@ def format_table(table,
 
     Args:
         table: list or tuple of dicts
-        fmt: 0 - raw (default), 1 - tuple, 2 - tuple of tuples
+        fmt: 0 - raw (default), 1 - generator of strings, 2 - generator of
+            tuples
         headers: list or tuple of headers (default: dict keys)
         separator: cell separator (default: "  ")
         align: 0 - no align, 1 - align decimals to right (default)
@@ -53,7 +54,7 @@ def format_table(table,
         if not calign: key_isalpha = ()
         need_body_sep = body_sep is not None
         vals = ()
-        if fmt == OUT_RAW:
+        if fmt == OUTPUT_RAW:
             result = ''
         # dig
         for ki, k in enumerate(keys):
@@ -79,7 +80,7 @@ def format_table(table,
         # output
         # add header
         if generate_header:
-            if fmt == OUT_RAW or fmt == OUT_TUPLE:
+            if fmt == OUTPUT_RAW or fmt == OUTPUT_GENERATOR:
                 header = ''
                 if need_body_sep:
                     bsep = ''
@@ -121,7 +122,7 @@ def format_table(table,
 
         def body_generator():
             for v in range(lv0):
-                if fmt == OUT_TT:
+                if fmt == OUT_GENERATOR_TUPLES:
                     row = ()
                 else:
                     row = ''
@@ -130,9 +131,9 @@ def format_table(table,
                         r = vals[i][v].ljust(key_lengths[i])
                     else:
                         r = vals[i][v].rjust(key_lengths[i])
-                    if fmt == OUT_TT:
+                    if fmt == OUT_GENERATOR_TUPLES:
                         row += (r,)
-                    elif fmt == OUT_TUPLE:
+                    elif fmt == OUTPUT_GENERATOR:
                         if i < len_keysn:
                             row += r + separator
                         else:
@@ -141,7 +142,7 @@ def format_table(table,
 
         # add body
         lv0 = len(vals[0])
-        if fmt == OUT_RAW:
+        if fmt == OUTPUT_RAW:
             result += '\n'.join(body_generator(False))
         else:
             result = body_generator()

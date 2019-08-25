@@ -78,9 +78,15 @@ Ken     1800  Q/A
 
 ### format_table
 
-Formats a table. Outputs data in raw, tuple of strings or tuple of tuples of
-strings, customize headers, separators etc. *fmt=0* - raw, *1* - tuple of
-strings, *2* - tuple of tuples of strings. Read pydoc for more info.
+Formats a table. Outputs data in raw, generator of strings (one string per row)
+or generator of tuples of strings (one tuple per row, one string per column),
+
+* **fmt=0** raw string
+* **fmt=1** generator of strings
+* **fmt=2** generator of tuples of strings
+
+You may also customize headers, separators etc. Read pydoc for more
+info.
 
 ### make_table
 
