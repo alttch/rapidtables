@@ -28,7 +28,7 @@ for c in cols:
 
 ![colorized table](colored.png?raw=true)
 
-Pretty cool, isn't it? Actually, it was the most complicated example, you can
+Pretty cool, isn't it? Actually, it was the most complex example, you can
 make just
 
 ```python
