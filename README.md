@@ -7,9 +7,8 @@ possible.
 <img src="https://img.shields.io/pypi/v/rapidtables.svg" /> <img src="https://img.shields.io/badge/license-MIT-green" /> <img src="https://img.shields.io/badge/python-2.7%20%7C%203.5%20%7C%203.6%20%7C%203.7-blue.svg" />
 
 **rapidtables** is focused on speed and is useful for applications which
-dynamically refresh data in console. The module code is heavily optimized, it
-uses only tuples inside and on the relatively small tables (<2000 records) it
-renders even faster than Pandas.
+dynamically refresh data in console. The module code is heavily optimized and
+written purely in Python.
 
 And unlike other similar modules, **rapidtables** can output pre-formatted
 generators of strings or even generators of tuples of strings, which allows you
@@ -144,9 +143,6 @@ Ken     1800  Q/A
 The same as *make_table*, but prints table to stdout.
 
 ## Benchmarks
-
-**rapidtables** is written purely in Python, it will lose to Pandas on the
-large (3000+ records) tables, but on small it works super fast.
 
 ![benchmark](https://github.com/alttch/rapidtables/blob/master/benchmark.png?raw=true)
 

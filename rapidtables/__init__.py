@@ -58,25 +58,26 @@ def format_table(table,
             result = ''
         # dig
         for ki, k in enumerate(keys):
-            v = ()
             alpha = False
             if generate_header:
-                klen = len(headers[ki]) if headers else len(k)
+                hklen = len(headers[ki]) if headers else len(k)
+            klen = 0
             for ri, r in enumerate(table):
-                value = r.get(k)
+                ivalue = r.get(k)
+                value = str(ivalue) if ivalue is not None else ''
+                if value is not None:
+                    klen = max(klen, len(value))
                 if not alpha:
-                    if value is not None:
+                    if ivalue is not None:
                         try:
-                            float(value)
+                            float(ivalue)
                         except:
                             alpha = True
-                v += (str(value) if value is not None else '',)
             if generate_header:
-                key_lengths += (max(klen, len(max(v, key=len))),)
+                key_lengths += (max(hklen, klen),)
             else:
-                key_lengths += (len(max(v, key=len)),)
+                key_lengths += (klen,)
             if not calign: key_isalpha += (alpha,)
-            vals += (v,)
         # output
         # add header
         if generate_header:
@@ -121,16 +122,20 @@ def format_table(table,
                         header += (ht.rjust(key_lengths[i]),)
 
         def body_generator():
-            for v in range(lv0):
+            for v in table:
                 if fmt == OUTPUT_GENERATOR_TUPLES:
                     row = ()
                 else:
                     row = ''
-                for i in lkr:
-                    if calign or key_isalpha[i]:
-                        r = vals[i][v].ljust(key_lengths[i])
+                for i, k in enumerate(keys):
+                    val = v.get(k)
+                    if val is not None:
+                        if calign or key_isalpha[i]:
+                            r = str(val).ljust(key_lengths[i])
+                        else:
+                            r = str(val).rjust(key_lengths[i])
                     else:
-                        r = vals[i][v].rjust(key_lengths[i])
+                        r = ' ' * key_lengths[i]
                     if fmt == OUTPUT_GENERATOR_TUPLES:
                         row += (r,)
                     elif fmt == OUTPUT_GENERATOR:
@@ -141,7 +146,6 @@ def format_table(table,
                 yield row
 
         # add body
-        lv0 = len(vals[0])
         if fmt == OUTPUT_RAW:
             result += '\n'.join(body_generator())
         else:
