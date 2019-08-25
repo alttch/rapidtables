@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from rapidtables import format_table, print_table
 from termcolor import colored
 

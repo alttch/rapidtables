@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.15'
+__version__ = '0.0.20'
 
 OUT_RAW = 0
 OUT_TUPLE = 1
@@ -35,11 +35,14 @@ def format_table(table,
         body_sep_fill: string used to fill body separator to next col
 
     Returns:
-        result if generate_header is False and body_sep is None
-        (header, result) if generate_header is True and body_sep is None
-        (header, body sep., result) if generate_header is True and body_sep is
+        body if generate_header is False and body_sep is None
+        (header, body) if generate_header is True and body_sep is None
+        (header, body sep., body) if generate_header is True and body_sep is
                                     not None
-    '''
+
+        if fmt is set to 1 or 2, body is returned as generator of strings or
+        generator of tuples
+        '''
     calign = align == 0
     if table:
         keys = tuple(table[0])
@@ -52,8 +55,9 @@ def format_table(table,
         vals = ()
         if fmt == OUT_RAW:
             result = ''
+            ntpl = False
         else:
-            result = ()
+            ntpl = True
         # dig
         for ki, k in enumerate(keys):
             v = ()
@@ -117,34 +121,33 @@ def format_table(table,
                         header += (ht.ljust(key_lengths[i]),)
                     else:
                         header += (ht.rjust(key_lengths[i]),)
-        # add body
-        for v in range(len(vals[0])):
-            if fmt == OUT_TT:
-                row = ()
-                ntpl = True
-            elif fmt == OUT_TUPLE:
-                row = ''
-                ntpl = True
-            else:
-                ntpl = False
-            for i in lkr:
-                if calign or key_isalpha[i]:
-                    r = vals[i][v].ljust(key_lengths[i])
-                else:
-                    r = vals[i][v].rjust(key_lengths[i])
+
+        def body_generator():
+            for v in range(lv0):
                 if fmt == OUT_TT:
-                    row += (r,)
-                elif fmt == OUT_TUPLE:
-                    if i < len_keysn:
-                        row += r + separator
-                    else:
-                        row += r
+                    row = ()
                 else:
-                    result += r + separator
-            if ntpl:
-                result += (row,)
-            else:
-                result += '\n'
+                    row = ''
+                for i in lkr:
+                    if calign or key_isalpha[i]:
+                        r = vals[i][v].ljust(key_lengths[i])
+                    else:
+                        r = vals[i][v].rjust(key_lengths[i])
+                    if fmt == OUT_TT:
+                        row += (r,)
+                    elif fmt == OUT_TUPLE:
+                        if i < len_keysn:
+                            row += r + separator
+                        else:
+                            row += r
+                yield row
+
+        # add body
+        lv0 = len(vals[0])
+        if fmt == OUT_RAW:
+            result += '\n'.join(body_generator(False))
+        else:
+            result = body_generator()
         if generate_header and body_sep:
             return (header, bsep, result)
         elif generate_header:
