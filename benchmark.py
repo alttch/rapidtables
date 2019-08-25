@@ -11,7 +11,6 @@ import rapidtables
 import tabulate
 import pandas
 
-num = 100
 table = []
 
 pandas.options.display.max_colwidth = 50
@@ -38,6 +37,7 @@ print('Benchmarking')
 print()
 
 for rec in (30, 300, 3000, 30000):
+    num = 90000 // rec
     print(
         colored(str(rec), color='white',
                 attrs=['bold']), 'records table, average render (' +
@@ -46,7 +46,7 @@ for rec in (30, 300, 3000, 30000):
     for i in range(rec):
         table.append({
             'n': i,
-            'txt': 't' * int(i / 10),
+            'txt': 't' * int((i if i < 300 else 300) / 10),
             'zzz': None,
             'numeric': 222,
             'yyy': 'eee {} 333'.format(i)
