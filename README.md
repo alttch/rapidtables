@@ -13,6 +13,12 @@ And unlike other similar modules, **rapidtables** can output pre-formatted
 tuples of strings or even tuples of tuples of strings, which allows you to
 colorize every single column.
 
+## Install
+
+```shell
+pip3 install rapidtables
+```
+
 ## Example
 
 ```python
