@@ -33,8 +33,7 @@ def test_pandas():
     return df.fillna(' ').to_string()
 
 
-print('Benchmarking')
-print()
+print('Benchmarking\n')
 
 for rec in (30, 300, 3000, 30000):
     num = 90000 // rec
@@ -42,7 +41,7 @@ for rec in (30, 300, 3000, 30000):
         colored(str(rec), color='white',
                 attrs=['bold']), 'records table, average render (' +
         colored('milliseconds', color='yellow') + ')\n')
-    table.clear()
+    table = []
     for i in range(rec):
         table.append({
             'n': i,
@@ -71,12 +70,16 @@ for rec in (30, 300, 3000, 30000):
     print(colored('\n'.join(raw[1]), color='yellow'))
     print()
     fg = partial(colored, color='green', attrs=['bold'])
-    print(colored('rapidtables', color='red', attrs=['bold']) + ': ', end='')
+    summary = colored('rapidtables', color='red', attrs=['bold']) + ': '
     if rec <= 3000:
-        print('{}x faster than tabulate, '.format(fg(f1)), end='')
-    print('{}x faster than pandas'.format(fg(f2)))
-    print('=' * (os.get_terminal_size(0)[0] - 10))
-    print()
+        summary += '{}x faster than tabulate, '.format(fg(f1))
+    summary += '{}x faster than pandas'.format(fg(f2))
+    print(summary)
+    try:
+        print('=' * (os.get_terminal_size(0)[0] - 10))
+    except:
+        print('=' * 20)
+    print('')
 
 print(
     colored('(tables in this test are generated with rapidtables)',

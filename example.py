@@ -33,9 +33,10 @@ for r in rows:
         (colored(r[1], color='cyan')),
         (colored(r[2], color='yellow')))
     print(spacer.join(cols))
-print()
+print('')
 
-# colorize only rows, custom header
+# colorize only rows, custom header. may not work properly, use ordered dicts
+# for input data rows
 header, rows = format_table(data,
                             headers=('first name', 'income', 'position'),
                             fmt=1)
@@ -44,9 +45,9 @@ print(colored('-' * len(header), color='grey'))
 for r in rows:
     print(colored(r, color='yellow'))
 
-print()
+print('')
 
 # print raw
 for fmt in ('raw', 'simple', 'md', 'rst'):
     print_table(data, tablefmt=fmt)
-    print()
+    print('')
