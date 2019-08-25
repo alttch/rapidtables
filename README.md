@@ -18,7 +18,7 @@ colorize every single column.
 ## Install
 
 ```shell
-pip3 install rapidtables
+pip install rapidtables
 ```
 
 ## Example
