@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# if you need to keep strict column ordering, use OrderedDicts for the rows
+# if you need to keep strict column ordering, use OrderedDict for the rows
 data = [{
     'name': 'John',
     'salary': 2000,

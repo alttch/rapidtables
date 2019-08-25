@@ -24,7 +24,7 @@ pip install rapidtables
 ## Example
 
 ```python
-# if you need to keep strict column ordering, use OrderedDicts for the rows
+# if you need to keep strict column ordering, use OrderedDict for the rows
 data = [
     { 'name': 'John', 'salary': 2000, 'job': 'DevOps' },
     { 'name': 'Jack', 'salary': 2500, 'job': 'Architect' },
