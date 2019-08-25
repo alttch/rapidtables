@@ -18,7 +18,7 @@ pandas.options.display.max_colwidth = 50
 
 
 def test_rapidtables():
-    return rapidtables.format_table(table)
+    return rapidtables.make_table(table)
 
 
 def test_tabulate():

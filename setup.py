@@ -19,6 +19,7 @@ setuptools.setup(
     license='MIT',
     install_requires=[],
     classifiers=(
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
         'Topic :: Software Development :: Libraries',
