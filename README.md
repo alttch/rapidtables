@@ -24,6 +24,13 @@ pip install rapidtables
 ## Example
 
 ```python
+data = [
+    { 'name': 'John', 'salary': 2000, 'job': 'DevOps' },
+    { 'name': 'Jack', 'salary': 2500, 'job': 'Architect' },
+    { 'name': 'Diana', 'salary': None, 'job': 'Student' },
+    { 'name': 'Ken', 'salary': 1800, 'job': 'Q/A' }
+]
+
 from rapidtables import format_table
 from termcolor import colored
 

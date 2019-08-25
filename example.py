@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-from rapidtables import format_table, print_table
-from termcolor import colored
-
 data = [
     {
         'name': 'John',
@@ -25,6 +22,9 @@ data = [
         'job': 'Q/A'
     }
 ]
+
+from rapidtables import format_table, print_table
+from termcolor import colored
 
 # colorize every single column
 header, rows = format_table(data, fmt=2)
