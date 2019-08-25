@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.11'
+__version__ = '0.0.12'
 
 OUT_RAW = 0
 OUT_TUPLE = 1
@@ -50,7 +50,7 @@ def format_table(table,
         if not calign: key_isalpha = ()
         need_body_sep = body_sep is not None
         vals = ()
-        if fmt == 0:
+        if fmt == OUT_RAW:
             result = ''
         else:
             result = ()
