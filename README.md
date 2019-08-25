@@ -106,7 +106,7 @@ table = rapidtables.make_table(table, tablefmt='md') # Markdown
 ```
 
 ```python
-table = rapidtables.make_table(table, tablefmt='md') # reStructured Text
+table = rapidtables.make_table(table, tablefmt='rst') # reStructured Text
 ```
 ```
 ====  ======  =========
