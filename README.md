@@ -129,8 +129,8 @@ The same as *make_table*, but prints table to stdout.
 
 ## Benchmarks
 
-**rapidtables** is written purely in Python, it will loose to Pandas on a large
-(3000+ records) tables, but on small it works super fast.
+**rapidtables** is written purely in Python, it will loose to Pandas on the
+large (3000+ records) tables, but on small it works super fast.
 
 ![benchmark](https://github.com/alttch/rapidtables/blob/master/benchmark.png?raw=true)
 
