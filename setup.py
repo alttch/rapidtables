@@ -6,7 +6,7 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='atasker',
+    name='rapidtables',
     version=__version__,
     author='Altertech',
     author_email='div@altertech.com',
