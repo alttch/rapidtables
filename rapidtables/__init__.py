@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.20'
+__version__ = '0.0.21'
 
 OUT_RAW = 0
 OUT_TUPLE = 1
@@ -55,9 +55,6 @@ def format_table(table,
         vals = ()
         if fmt == OUT_RAW:
             result = ''
-            ntpl = False
-        else:
-            ntpl = True
         # dig
         for ki, k in enumerate(keys):
             v = ()
