@@ -26,7 +26,7 @@ for c in cols:
     print(colored(c[2], color='yellow'))
 ```
 
-![colorized table](colored.png?raw=true)
+![colorized table](https://github.com/alttch/rapidtables/blob/master/colored.png?raw=true)
 
 Pretty cool, isn't it? Actually, it was the most complex example, you can
 make just
@@ -56,7 +56,8 @@ Ken     1800  Q/A
 ### format_table
 
 Formats a table. Outputs data in raw, tuple of strings or tuple of tuples of
-strings, customize headers, separators etc. Read pydoc for more info.
+strings, customize headers, separators etc. *fmt=0* - raw, *1* - tuple of
+strings, *2* - tuple of tuples of strings. Read pydoc for more info.
 
 ### make_table
 
@@ -117,6 +118,6 @@ The same as *make_table*, but prints table to stdout.
 **rapidtables** is written purely in Python, it will loose to Pandas on a large
 (3000+ records) tables, but on small it works super fast.
 
-![colorized table](benchmark.png?raw=true)
+![benchmark](https://github.com/alttch/rapidtables/blob/master/benchmark.png?raw=true)
 
 Enjoy!
