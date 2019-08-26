@@ -1,10 +1,10 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.0.34'
+__version__ = '0.0.35'
 
 OUTPUT_RAW = 0
 OUTPUT_GENERATOR = 1
-OUTPUT_GENERATOR_TUPLES = 2
+OUTPUT_GENERATOR_COLS = 2
 
 _TABLEFMT_SIMPLE = 1
 _TABLEFMT_MD = 2
@@ -120,7 +120,7 @@ def format_table(table,
 
         def body_generator():
             for v in table:
-                if fmt == OUTPUT_GENERATOR_TUPLES:
+                if fmt == OUTPUT_GENERATOR_COLS:
                     row = ()
                 else:
                     row = ''
@@ -133,7 +133,7 @@ def format_table(table,
                             r = str(val).rjust(key_lengths[i])
                     else:
                         r = ' ' * key_lengths[i]
-                    if fmt == OUTPUT_GENERATOR_TUPLES:
+                    if fmt == OUTPUT_GENERATOR_COLS:
                         row += (r,)
                     # OUTPUT_GENERATOR
                     elif i < len_keysn:
