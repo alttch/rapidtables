@@ -90,7 +90,7 @@ info.
 
 ### make_table
 
-Generates a ready to output table. Support basic formats:
+Generates a ready to output table. Supports basic formats:
 
 ```python
 table = rapidtables.make_table(data, tablefmt='raw')
