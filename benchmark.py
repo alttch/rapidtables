@@ -26,10 +26,14 @@ def test_tabulate():
 
 def test_pandas():
     df = pandas.DataFrame(data=table)
+    # when printing table from dict, pandas requires index to be set, otherwise
+    # internal index is printed, if you think this is unfair, comment lines
+    ### from here
     cols = list(df)
     df = df.loc[:, cols]
     idxcol = cols[0]
     df.set_index(idxcol, inplace=True)
+    ### to here
     return df.fillna(' ').to_string()
 
 
