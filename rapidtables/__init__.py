@@ -16,12 +16,16 @@ ALIGN_RIGHT = 2
 ALIGN_CENTER = 3
 ALIGN_HOMOGENEOUS_NUMBERS_RIGHT = 4
 
+COLUMN_WIDTH_CALC = 0
+COLUMN_HOMOGENEOUS_WIDTH_CALC = 1
+
 
 def format_table(table,
                  fmt=FORMAT_RAW,
                  headers=None,
                  separator='  ',
                  align=ALIGN_NUMBERS_RIGHT,
+                 column_width=COLUMN_WIDTH_CALC,
                  generate_header=True,
                  body_sep=None,
                  body_sep_fill='  '):
@@ -32,11 +36,28 @@ def format_table(table,
 
     Args:
         table: list or tuple of dicts
-        fmt: 0 - raw (default), 1 - generator of strings, 2 - generator of
-            tuples
+        fmt:
+            FORMAT_RAW - raw string (default)
+            FORMAT_GENERATOR - generator of strings
+            FORMAT_GENERATOR_COLS - generator of tuples of strings
         headers: list or tuple of headers (default: dict keys)
         separator: cell separator (default: "  ")
-        align: integer or list/tuple
+        align:
+            ALIGN_LEFT - align all cols to the left
+            ALIGN_NUMBERS_RIGHT (default)_- align numbers to the right
+            ALIGN_RIGHT - align all cols to the right
+            ALIGN_CENTER - aligh all cols to center
+            ALIGN_HOMOGENEOUS_NUMBERS_RIGHT - use first row of data where col
+                is not None to determine is col numeric or alpha
+            list or tuple of ALIGN_<LEFT|RIGHT|CENTER> - use the specified
+                aligns for each column
+        column_width:
+            COLUMN_WIDTH_CALC (default) - read the entire table to find the
+                best width
+            COLUMN_HOMOGENEOUS_WIDTH_CALC - use the first row of data where col
+                is not None to guess at good column widths
+            list or tuple of integers - use the specified widths for each
+            column
         generate_header: True (default) - create and return header
         body_sep: char to use as body separator (default: None)
         body_sep_fill: string used to fill body separator to next col
@@ -47,8 +68,8 @@ def format_table(table,
         (header, body sep., body) if generate_header is True and body_sep is
                                     not None
 
-        if fmt is set to 1 or 2, body is returned as generator of strings or
-        generator of tuples
+        if fmt is set to FORMAT_GENERATOR or FORMAT_GENERATOR_COLS, body is
+        returned as generator of strings or generator of tuples
         '''
     if table:
         if isinstance(align, int):
@@ -66,36 +87,57 @@ def format_table(table,
             dig_aligns = False
         keys = tuple(table[0])
         len_keysn = len(keys) - 1
-        key_lengths = ()
         need_body_sep = body_sep is not None
         if fmt == FORMAT_RAW:
             result = ''
         # dig
-        for ki, k in enumerate(keys):
-            if dig_aligns:
-                do_align = None if \
-                        align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT else \
-                        ALIGN_RIGHT
-            if generate_header:
-                hklen = len(headers[ki]) if headers else len(k)
-            klen = 0
-            for ri, r in enumerate(table):
-                value = r.get(k)
-                if value is not None:
-                    klen = max(klen, len(str(value)))
-                    if (align == ALIGN_NUMBERS_RIGHT and do_align == ALIGN_RIGHT
-                       ) or (align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT and
-                             do_align is None):
-                        try:
-                            float(value)
-                            do_align = ALIGN_RIGHT
-                        except:
-                            do_align = ALIGN_LEFT
-            if generate_header:
-                key_lengths += (max(hklen, klen),)
-            else:
-                key_lengths += (klen,)
-            if dig_aligns: align_cols += (do_align,)
+        if column_width == COLUMN_WIDTH_CALC or \
+                column_width == COLUMN_HOMOGENEOUS_WIDTH_CALC:
+            key_lengths = ()
+            dig_colwidth = True
+        else:
+            key_lengths = column_width
+            dig_colwidth = False
+        if dig_aligns or dig_colwidth:
+            for ki, k in enumerate(keys):
+                if dig_aligns:
+                    do_align = None if \
+                            align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT else \
+                            ALIGN_RIGHT
+                if dig_colwidth:
+                    if generate_header:
+                        hklen = len(headers[ki]) if headers else len(k)
+                    klen = 0
+                for ri, r in enumerate(table):
+                    value = r.get(k)
+                    if value is not None:
+                        if dig_colwidth:
+                            klen = max(klen, len(str(value)))
+                        if (align == ALIGN_NUMBERS_RIGHT and
+                                do_align == ALIGN_RIGHT) or (
+                                    align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT and
+                                    do_align is None):
+                            try:
+                                float(value)
+                                do_align = ALIGN_RIGHT
+                            except:
+                                do_align = ALIGN_LEFT
+                    if (column_width == COLUMN_HOMOGENEOUS_WIDTH_CALC and \
+                            klen > 0 and \
+                                (not dig_aligns or \
+                                (align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT and \
+                                do_align is not None))) or \
+                            (align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT and \
+                                do_align is not None and (not dig_colwidth or \
+                                (column_width == COLUMN_HOMOGENEOUS_WIDTH_CALC \
+                                    and klen > 0))):
+                        break
+                if dig_colwidth:
+                    if generate_header:
+                        key_lengths += (max(hklen, klen),)
+                    else:
+                        key_lengths += (klen,)
+                if dig_aligns: align_cols += (do_align,)
         # output
         # add header
         if generate_header:
@@ -188,7 +230,8 @@ def format_table(table,
 def make_table(table,
                tablefmt='simple',
                headers=None,
-               align=ALIGN_NUMBERS_RIGHT):
+               align=ALIGN_NUMBERS_RIGHT,
+               column_width=COLUMN_WIDTH_CALC):
     '''
     Generates ready-to-output table
 
@@ -198,11 +241,14 @@ def make_table(table,
         table: list or tuple of dicts
         tablefmt: raw, simple (default), md (markdown) or rst (reStructuredText)
         headers: list or tuple of headers (default: dict keys)
-        align: 0 - no align, 1 - align decimals to right (default)
     '''
     if tablefmt == 'raw':
-        t = format_table(table, fmt=1, headers=headers, align=align)
-        return t[0] + '\n' + len(t[0]) * '-' + '\n' + '\n'.join(t[1])
+        h, t = format_table(table,
+                         fmt=FORMAT_RAW,
+                         headers=headers,
+                         align=align,
+                         column_width=column_width)
+        return h + '\n' + '-' * len(h) + '\n' + t
     else:
         if tablefmt == 'simple':
             body_sep = '-'
@@ -222,9 +268,10 @@ def make_table(table,
         else:
             raise RuntimeError('table format not supported')
         t = format_table(table,
-                         fmt=1,
+                         fmt=FORMAT_GENERATOR,
                          headers=headers,
                          align=align,
+                         column_width=column_width,
                          separator=separator,
                          body_sep_fill=body_sep_fill,
                          body_sep=body_sep)
