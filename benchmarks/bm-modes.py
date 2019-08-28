@@ -28,8 +28,23 @@ def test_align_numbers():
 
 def test_align_numbers_h():
     pbar.update(1)
+    return rapidtables.make_table(
+        table, align=rapidtables.ALIGN_HOMOGENEOUS_NUMBERS_RIGHT)
+
+
+def test_align_numbers_h_cols_h():
+    pbar.update(1)
+    return rapidtables.make_table(
+        table,
+        align=rapidtables.ALIGN_HOMOGENEOUS_NUMBERS_RIGHT,
+        column_width=rapidtables.COLUMN_HOMOGENEOUS_WIDTH_CALC)
+
+
+def test_all_fixed():
+    pbar.update(1)
     return rapidtables.make_table(table,
-                                  align=rapidtables.ALIGN_HOMOGENEOUS_RIGHT)
+                                  align=rapidtables.ALIGN_LEFT,
+                                  column_width=(20, 20, 20, 20, 20))
 
 
 def test_align_predefined():
@@ -54,22 +69,28 @@ for rec in (30, 300, 3000, 30000):
             'yyy': 'eee {} 333'.format(i)
         })
 
-    with tqdm(total=num * 4, desc=colored(str(rec).rjust(6),
+    with tqdm(total=num * 6, desc=colored(str(rec).rjust(6),
                                           color='white')) as pbar:
         r_fixed = timeit.timeit(stmt=test_fixed_align, number=num) / num * 1000
         r_numbers = timeit.timeit(stmt=test_align_numbers,
                                   number=num) / num * 1000
-        r_numbers_h = timeit.timeit(stmt=test_align_numbers,
+        r_numbers_h = timeit.timeit(stmt=test_align_numbers_h,
                                     number=num) / num * 1000
         r_predefined = timeit.timeit(stmt=test_align_predefined,
                                      number=num) / num * 1000
+        r_numbers_h_col_h = timeit.timeit(stmt=test_align_numbers_h_cols_h,
+                                          number=num) / num * 1000
+        r_all_fixed = timeit.timeit(stmt=test_all_fixed,
+                                    number=num) / num * 1000
     nfmt = '{:.3f}'
     res = OrderedDict()
     res['records'] = rec
-    res['fixed'] = nfmt.format(r_fixed)
-    res['numbers'] = nfmt.format(r_numbers)
+    res['align-f'] = nfmt.format(r_fixed)
+    res['align-n'] = nfmt.format(r_numbers)
     res['num hom'] = nfmt.format(r_numbers_h)
-    res['predefined'] = nfmt.format(r_predefined)
+    res['align-p'] = nfmt.format(r_predefined)
+    res['all hom'] = nfmt.format(r_numbers_h_col_h)
+    res['all fixed'] = nfmt.format(r_all_fixed)
     result.append(res)
 
 header, rows = rapidtables.format_table(result,
