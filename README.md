@@ -44,7 +44,7 @@ for r in rows:
     print(colored(r[2], color='yellow'))
 ```
 
-![colorized cols](https://github.com/alttch/rapidtables/blob/master/colored.png?raw=true)
+![colorized cols](https://github.com/alttch/rapidtables/blob/master/examples/colored.png?raw=true)
 
 Pretty cool, isn't it? Actually, it was the most complex example, you can
 work with header + table rows already joined:
@@ -59,7 +59,7 @@ for r in rows:
     print(colored(r, color='yellow'))
 ```
 
-![colorized rows](https://github.com/alttch/rapidtables/blob/master/colored-rows.png?raw=true)
+![colorized rows](https://github.com/alttch/rapidtables/blob/master/examples/colored-rows.png?raw=true)
 
 Or you can use *make_table* function to return the table out-of-the-box (or
 *print_table* to instantly print it), and print it in raw:
@@ -164,6 +164,6 @@ The same as *make_table*, but prints table to stdout.
 
 (Python 3.7)
 
-![benchmark](https://github.com/alttch/rapidtables/blob/master/benchmark.png?raw=true)
+![benchmarks](https://github.com/alttch/rapidtables/blob/master/benchmarks/benchmark.png?raw=true)
 
 Enjoy!
