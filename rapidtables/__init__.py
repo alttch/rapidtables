@@ -52,7 +52,8 @@ def format_table(table,
         '''
     if table:
         if isinstance(align, int):
-            if align == ALIGN_NUMBERS_RIGHT or align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT:
+            if align == ALIGN_NUMBERS_RIGHT or \
+                    align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT:
                 dig_aligns = True
                 use_aligns = True
                 align_cols = ()
@@ -75,7 +76,8 @@ def format_table(table,
         for ki, k in enumerate(keys):
             if dig_aligns:
                 do_align = None if \
-                        align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT else ALIGN_RIGHT
+                        align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT else \
+                        ALIGN_RIGHT
             if generate_header:
                 hklen = len(headers[ki]) if headers else len(k)
             klen = 0
