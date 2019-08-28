@@ -2,20 +2,26 @@ __author__ = "Altertech"
 __license__ = "MIT"
 __version__ = '0.0.35'
 
-OUTPUT_RAW = 0
-OUTPUT_GENERATOR = 1
-OUTPUT_GENERATOR_COLS = 2
+FORMAT_RAW = 0
+FORMAT_GENERATOR = 1
+FORMAT_GENERATOR_COLS = 2
 
 _TABLEFMT_SIMPLE = 1
 _TABLEFMT_MD = 2
 _TABLEFMT_RST = 3
 
+ALIGN_LEFT = 0
+ALIGN_NUMBERS_RIGHT = 1
+ALIGN_RIGHT = 2
+ALIGN_CENTER = 3
+ALIGN_HOMOGENEOUS_NUMBERS_RIGHT = 4
+
 
 def format_table(table,
-                 fmt=0,
+                 fmt=FORMAT_RAW,
                  headers=None,
                  separator='  ',
-                 align=1,
+                 align=ALIGN_NUMBERS_RIGHT,
                  generate_header=True,
                  body_sep=None,
                  body_sep_fill='  '):
@@ -30,7 +36,7 @@ def format_table(table,
             tuples
         headers: list or tuple of headers (default: dict keys)
         separator: cell separator (default: "  ")
-        align: 0 - no align, 1 - align decimals to right (default)
+        align: integer or list/tuple
         generate_header: True (default) - create and return header
         body_sep: char to use as body separator (default: None)
         body_sep_fill: string used to fill body separator to next col
@@ -44,20 +50,32 @@ def format_table(table,
         if fmt is set to 1 or 2, body is returned as generator of strings or
         generator of tuples
         '''
-    calign = align == 0
     if table:
+        if isinstance(align, int):
+            if align == ALIGN_NUMBERS_RIGHT or align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT:
+                dig_aligns = True
+                use_aligns = True
+                align_cols = ()
+            else:
+                dig_aligns = False
+                use_aligns = False
+        else:
+            align_cols = align
+            use_aligns = True
+            dig_aligns = False
         keys = tuple(table[0])
         len_keys = len(keys)
         lkr = range(len_keys)
         len_keysn = len_keys - 1
         key_lengths = ()
-        if not calign: key_isalpha = ()
         need_body_sep = body_sep is not None
-        if fmt == OUTPUT_RAW:
+        if fmt == FORMAT_RAW:
             result = ''
         # dig
         for ki, k in enumerate(keys):
-            alpha = False
+            if dig_aligns:
+                do_align = None if \
+                        align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT else ALIGN_RIGHT
             if generate_header:
                 hklen = len(headers[ki]) if headers else len(k)
             klen = 0
@@ -65,20 +83,23 @@ def format_table(table,
                 value = r.get(k)
                 if value is not None:
                     klen = max(klen, len(str(value)))
-                    if not (calign and alpha):
+                    if (align == ALIGN_NUMBERS_RIGHT and do_align == ALIGN_RIGHT
+                       ) or (align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT and
+                             do_align is None):
                         try:
                             float(value)
+                            do_align = ALIGN_RIGHT
                         except:
-                            alpha = True
+                            do_align = ALIGN_LEFT
             if generate_header:
                 key_lengths += (max(hklen, klen),)
             else:
                 key_lengths += (klen,)
-            if not calign: key_isalpha += (alpha,)
+            if dig_aligns: align_cols += (do_align,)
         # output
         # add header
         if generate_header:
-            if fmt == OUTPUT_RAW or fmt == OUTPUT_GENERATOR:
+            if fmt == FORMAT_RAW or fmt == FORMAT_GENERATOR:
                 header = ''
                 if need_body_sep:
                     bsep = ''
@@ -92,16 +113,23 @@ def format_table(table,
                             bsep += body_sep * key_lengths[i] + body_sep_fill
                         else:
                             bsep += body_sep * key_lengths[i]
-                    if calign or key_isalpha[i]:
+                    if (use_aligns and align_cols[i] == ALIGN_RIGHT
+                       ) or align == ALIGN_RIGHT:
+                        if i < len_keysn:
+                            header += ht.rjust(key_lengths[i]) + separator
+                        else:
+                            header += ht.rjust(key_lengths[i])
+                    elif (use_aligns and
+                          align_cols[i] == ALIGN_LEFT) or align == ALIGN_LEFT:
                         if i < len_keysn:
                             header += ht.ljust(key_lengths[i]) + separator
                         else:
                             header += ht.ljust(key_lengths[i])
                     else:
                         if i < len_keysn:
-                            header += ht.rjust(key_lengths[i]) + separator
+                            header += ht.center(key_lengths[i]) + separator
                         else:
-                            header += ht.rjust(key_lengths[i])
+                            header += ht.center(key_lengths[i])
             else:
                 header = ()
                 if need_body_sep:
@@ -113,29 +141,37 @@ def format_table(table,
                         ht = keys[i]
                     if need_body_sep:
                         bsep += ('-' * key_lengths[i],)
-                    if calign or key_isalpha[i]:
+                    if (use_aligns and align_cols[i] == ALIGN_RIGHT
+                       ) or align == ALIGN_RIGHT:
+                        header += (ht.rjust(key_lengths[i]),)
+                    elif (use_aligns and
+                          align_cols[i] == ALIGN_LEFT) or align == ALIGN_LEFT:
                         header += (ht.ljust(key_lengths[i]),)
                     else:
-                        header += (ht.rjust(key_lengths[i]),)
+                        header += (ht.center(key_lengths[i]),)
 
         def body_generator():
             for v in table:
-                if fmt == OUTPUT_GENERATOR_COLS:
+                if fmt == FORMAT_GENERATOR_COLS:
                     row = ()
                 else:
                     row = ''
                 for i, k in enumerate(keys):
                     val = v.get(k)
                     if val is not None:
-                        if calign or key_isalpha[i]:
+                        if (use_aligns and align_cols[i] == ALIGN_RIGHT
+                           ) or align == ALIGN_RIGHT:
+                            r = str(val).rjust(key_lengths[i])
+                        elif (use_aligns and align_cols[i] == ALIGN_LEFT
+                             ) or align == ALIGN_LEFT:
                             r = str(val).ljust(key_lengths[i])
                         else:
-                            r = str(val).rjust(key_lengths[i])
+                            r = str(val).center(key_lengths[i])
                     else:
                         r = ' ' * key_lengths[i]
-                    if fmt == OUTPUT_GENERATOR_COLS:
+                    if fmt == FORMAT_GENERATOR_COLS:
                         row += (r,)
-                    # OUTPUT_GENERATOR
+                    # FORMAT_GENERATOR
                     elif i < len_keysn:
                         row += r + separator
                     else:
@@ -143,7 +179,7 @@ def format_table(table,
                 yield row
 
         # add body
-        if fmt == OUTPUT_RAW:
+        if fmt == FORMAT_RAW:
             result += '\n'.join(body_generator())
         else:
             result = body_generator()
@@ -155,7 +191,10 @@ def format_table(table,
             return result
 
 
-def make_table(table, tablefmt='simple', headers=None, align=1):
+def make_table(table,
+               tablefmt='simple',
+               headers=None,
+               align=ALIGN_NUMBERS_RIGHT):
     '''
     Generates ready-to-output table
 
@@ -205,8 +244,8 @@ def make_table(table, tablefmt='simple', headers=None, align=1):
             return t[0] + '\n' + t[1] + '\n' + '\n'.join(t[2])
 
 
-def print_table(table, tablefmt='simple', headers=None, align=1):
+def print_table(*args, **kwargs):
     '''
     Same as make_table but prints results to stdout
     '''
-    print(make_table(table, tablefmt=tablefmt, headers=headers, align=align))
+    print(make_table(*args, **kwargs))

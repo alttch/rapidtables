@@ -81,9 +81,25 @@ Ken     1800  Q/A
 Formats a table. Outputs data in raw, generator of strings (one string per row)
 or generator of tuples of strings (one tuple per row, one string per column):
 
-* **fmt=0** raw string
-* **fmt=1** generator of strings
-* **fmt=2** generator of tuples of strings
+* **fmt=rapidtables.FORMAT_RAW** raw string
+* **fmt=rapidtables.FORMAT_GENERATOR** generator of strings
+* **fmt=rapidtables.FORMAT_GENERATOR_COLS** generator of tuples of strings
+
+Align columns:
+
+* **align=rapidtables.ALIGN_LEFT** align all columns to left
+* **align=rapidtables.ALIGN_NUMBERS_RIGHT** align numbers to right (default)
+* **align=rapidtables.ALIGN_RIGHT** align all columns to right
+* **align=rapidtables.ALIGN_CENTER** align all columns to center
+* **align=rapidtables.ALIGN_HOMOGENEOUS_NUMBERS_RIGHT** align numbers to right
+  but consider the table is homogeneous and check col values only to first
+  number or string (works slightly faster)
+
+To predefine aligns, set align to tuple or list:
+
+    *align=(rapidtables.ALIGN_LEFT, rapidtables.ALIGN_RIGHT, ....)*
+
+number of items in list must match number of columns in table.
 
 You may also customize headers, separators etc. Read pydoc for more
 info.

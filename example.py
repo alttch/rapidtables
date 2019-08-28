@@ -2,6 +2,10 @@
 
 # if you need to keep strict column ordering, use OrderedDict for the rows
 data = [{
+    'name': 'Mike',
+    'salary': None,
+    'job': 'Student'
+}, {
     'name': 'John',
     'salary': 2000,
     'job': 'DevOps'
@@ -11,7 +15,7 @@ data = [{
     'job': 'Architect'
 }, {
     'name': 'Diana',
-    'salary': None,
+    'salary': 'N/A',
     'job': 'Student'
 }, {
     'name': 'Ken',
@@ -20,18 +24,19 @@ data = [{
 }]
 
 from rapidtables import format_table, print_table
+from rapidtables import ALIGN_LEFT, ALIGN_CENTER
+from rapidtables import ALIGN_RIGHT, ALIGN_HOMOGENEOUS_RIGHT
+
 from termcolor import colored
 
 # colorize every single column
-header, rows = format_table(data, fmt=2)
+header, rows = format_table(data, fmt=2, align=ALIGN_HOMOGENEOUS_RIGHT)
 spacer = '  '
 print(colored(spacer.join(header), color='blue'))
 print(colored('-' * sum([(len(x) + 2) for x in header]), color='grey'))
 for r in rows:
-    cols = (
-        (colored(r[0], color='white', attrs=['bold'])),
-        (colored(r[1], color='cyan')),
-        (colored(r[2], color='yellow')))
+    cols = ((colored(r[0], color='white', attrs=['bold'])),
+            (colored(r[1], color='cyan')), (colored(r[2], color='yellow')))
     print(spacer.join(cols))
 print('')
 
@@ -47,7 +52,11 @@ for r in rows:
 
 print('')
 
-# print raw, don't align numbers to right for rst
-for fmt in ('raw', 'simple', 'md', 'rst'):
-    print_table(data, tablefmt=fmt, align=0 if fmt=='rst' else 1)
-    print('')
+print_table(data, tablefmt='raw', align=(ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT))
+print('')
+print_table(data, tablefmt='simple', align=ALIGN_LEFT)
+print('')
+print_table(data, tablefmt='md', align=ALIGN_CENTER)
+print('')
+print_table(data, tablefmt='rst', align=ALIGN_RIGHT)
+print('')
