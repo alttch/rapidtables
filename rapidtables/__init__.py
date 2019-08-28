@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 FORMAT_RAW = 0
 FORMAT_GENERATOR = 1
