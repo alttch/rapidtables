@@ -65,9 +65,7 @@ def format_table(table,
             use_aligns = True
             dig_aligns = False
         keys = tuple(table[0])
-        len_keys = len(keys)
-        lkr = range(len_keys)
-        len_keysn = len_keys - 1
+        len_keysn = len(keys) - 1
         key_lengths = ()
         need_body_sep = body_sep is not None
         if fmt == FORMAT_RAW:
@@ -105,52 +103,46 @@ def format_table(table,
                 header = ''
                 if need_body_sep:
                     bsep = ''
-                for i in lkr:
-                    if headers:
-                        ht = headers[i]
-                    else:
-                        ht = keys[i]
+                for i, (ht, key_len) in enumerate(
+                        zip(headers if headers else keys, key_lengths)):
                     if need_body_sep:
                         if i < len_keysn:
-                            bsep += body_sep * key_lengths[i] + body_sep_fill
+                            bsep += body_sep * key_len + body_sep_fill
                         else:
-                            bsep += body_sep * key_lengths[i]
+                            bsep += body_sep * key_len
                     if (use_aligns and align_cols[i] == ALIGN_RIGHT
                        ) or align == ALIGN_RIGHT:
                         if i < len_keysn:
-                            header += ht.rjust(key_lengths[i]) + separator
+                            header += ht.rjust(key_len) + separator
                         else:
-                            header += ht.rjust(key_lengths[i])
+                            header += ht.rjust(key_len)
                     elif (use_aligns and
                           align_cols[i] == ALIGN_LEFT) or align == ALIGN_LEFT:
                         if i < len_keysn:
-                            header += ht.ljust(key_lengths[i]) + separator
+                            header += ht.ljust(key_len) + separator
                         else:
-                            header += ht.ljust(key_lengths[i])
+                            header += ht.ljust(key_len)
                     else:
                         if i < len_keysn:
-                            header += ht.center(key_lengths[i]) + separator
+                            header += ht.center(key_len) + separator
                         else:
-                            header += ht.center(key_lengths[i])
+                            header += ht.center(key_len)
             else:
                 header = ()
                 if need_body_sep:
                     bsep = ()
-                for i in lkr:
-                    if headers:
-                        ht = headers[i]
-                    else:
-                        ht = keys[i]
+                for i, (ht, key_len) in enumerate(
+                        zip(headers if headers else keys, key_lengths)):
                     if need_body_sep:
-                        bsep += ('-' * key_lengths[i],)
+                        bsep += ('-' * key_len,)
                     if (use_aligns and align_cols[i] == ALIGN_RIGHT
                        ) or align == ALIGN_RIGHT:
-                        header += (ht.rjust(key_lengths[i]),)
+                        header += (ht.rjust(key_len),)
                     elif (use_aligns and
                           align_cols[i] == ALIGN_LEFT) or align == ALIGN_LEFT:
-                        header += (ht.ljust(key_lengths[i]),)
+                        header += (ht.ljust(key_len),)
                     else:
-                        header += (ht.center(key_lengths[i]),)
+                        header += (ht.center(key_len),)
 
         def body_generator():
             for v in table:
