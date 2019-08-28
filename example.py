@@ -24,13 +24,16 @@ data = [{
 }]
 
 from rapidtables import format_table, print_table
+from rapidtables import FORMAT_GENERATOR, FORMAT_GENERATOR_COLS
 from rapidtables import ALIGN_LEFT, ALIGN_CENTER
-from rapidtables import ALIGN_RIGHT, ALIGN_HOMOGENEOUS_RIGHT
+from rapidtables import ALIGN_RIGHT, ALIGN_HOMOGENEOUS_NUMBERS_RIGHT
 
 from termcolor import colored
 
 # colorize every single column
-header, rows = format_table(data, fmt=2, align=ALIGN_HOMOGENEOUS_RIGHT)
+header, rows = format_table(data,
+                            fmt=FORMAT_GENERATOR_COLS,
+                            align=ALIGN_HOMOGENEOUS_NUMBERS_RIGHT)
 spacer = '  '
 print(colored(spacer.join(header), color='blue'))
 print(colored('-' * sum([(len(x) + 2) for x in header]), color='grey'))
@@ -44,7 +47,7 @@ print('')
 # for input data rows
 header, rows = format_table(data,
                             headers=('first name', 'income', 'position'),
-                            fmt=1)
+                            fmt=FORMAT_GENERATOR)
 print(colored(header, color='blue'))
 print(colored('-' * len(header), color='grey'))
 for r in rows:

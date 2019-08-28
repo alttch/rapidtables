@@ -31,10 +31,10 @@ data = [
     { 'name': 'Ken', 'salary': 1800, 'job': 'Q/A' }
 ]
 
-from rapidtables import format_table
+from rapidtables import format_table, FORMAT_GENERATOR_COLS
 from termcolor import colored
 
-header, rows = format_table(data, fmt=2)
+header, rows = format_table(data, fmt=FORMAT_GENERATOR_COLS)
 spacer = '  '
 print(colored(spacer.join(header), color='blue'))
 print(colored('-' * sum([(len(x) + 2) for x in header]), color='grey'))
@@ -50,7 +50,9 @@ Pretty cool, isn't it? Actually, it was the most complex example, you can
 work with header + table rows already joined:
 
 ```python
-header, rows = format_table(data, fmt=1)
+from rapidtables import format_table, FORMAT_GENERATOR
+
+header, rows = format_table(data, fmt=FORMAT_GENERATOR)
 print(colored(header, color='blue'))
 print(colored('-' * len(header), color='grey'))
 for r in rows:
