@@ -7,6 +7,9 @@ from functools import partial
 from collections import OrderedDict
 from tqdm import tqdm
 
+import sys
+from pathlib import Path
+sys.path.insert(0, Path().absolute().parent.as_posix())
 import rapidtables
 
 table = []

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# for testing only, make sure it uses current rapidtables
+import sys
+from pathlib import Path
+sys.path.insert(0, Path().absolute().parent.as_posix())
+
 # if you need to keep strict column ordering, use OrderedDict for the rows
 data = [{
     'name': 'Mike',

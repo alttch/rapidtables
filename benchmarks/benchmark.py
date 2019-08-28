@@ -2,9 +2,15 @@
 
 import timeit
 import os
+
+
 from termcolor import colored
 from functools import partial
+from tqdm import tqdm
 
+import sys
+from pathlib import Path
+sys.path.insert(0, Path().absolute().parent.as_posix())
 import rapidtables
 
 # install tabulate and pandas modules to do benchmark
@@ -17,14 +23,17 @@ pandas.options.display.max_colwidth = 50
 
 
 def test_rapidtables():
+    pbar.update(1)
     return rapidtables.make_table(table)
 
 
 def test_tabulate():
+    pbar.update(1)
     return tabulate.tabulate(table, headers='keys')
 
 
 def test_pandas():
+    pbar.update(1)
     df = pandas.DataFrame(data=table)
     # when printing table from dict, pandas requires index to be set, otherwise
     # internal index is printed, if you think this is unfair, comment lines
@@ -40,7 +49,7 @@ def test_pandas():
 print('Benchmarking\n')
 
 for rec in (30, 300, 3000, 30000):
-    num = 90000 // rec
+    num = 300000 // rec
     print(
         colored(str(rec), color='white',
                 attrs=['bold']), 'records table, average render (' +
@@ -57,15 +66,17 @@ for rec in (30, 300, 3000, 30000):
 
     result = {}
     outs = '{:.3f}'
-    result_rapidtables = timeit.timeit(stmt=test_rapidtables,
-                                       number=num) / num * 1000
-    result_pandas = timeit.timeit(stmt=test_pandas, number=num) / num * 1000
-    result['rapidtables'] = outs.format(result_rapidtables)
-    if rec <= 3000:
-        result_tabulate = timeit.timeit(stmt=test_tabulate,
-                                        number=num) / num * 1000
-        result['tabulate'] = outs.format(result_tabulate)
-        f1 = '{:.1f}'.format(result_tabulate / result_rapidtables)
+    with tqdm(total=num * (3 if rec <=3000 else 2)) as pbar:
+        result_rapidtables = timeit.timeit(stmt=test_rapidtables,
+                                           number=num) / num * 1000
+        result_pandas = timeit.timeit(stmt=test_pandas, number=num) / num * 1000
+        result['rapidtables'] = outs.format(result_rapidtables)
+        if rec <= 3000:
+            result_tabulate = timeit.timeit(stmt=test_tabulate,
+                                            number=num) / num * 1000
+            result['tabulate'] = outs.format(result_tabulate)
+            f1 = '{:.1f}'.format(result_tabulate / result_rapidtables)
+    print('')
     result['pandas'] = outs.format(result_pandas)
     f2 = '{:.1f}'.format(result_pandas / result_rapidtables)
     raw = rapidtables.format_table([result], fmt=1)
