@@ -26,6 +26,7 @@ def format_table(table,
                  separator='  ',
                  align=ALIGN_NUMBERS_RIGHT,
                  column_width=COLUMN_WIDTH_CALC,
+                 max_column_width=None,
                  generate_header=True,
                  body_sep=None,
                  body_sep_fill='  '):
@@ -112,7 +113,11 @@ def format_table(table,
                     value = r.get(k)
                     if value is not None:
                         if dig_colwidth:
-                            klen = max(klen, len(str(value)))
+                            if max_column_width is None:
+                                klen = max(klen, len(str(value)))
+                            else:
+                                klen = min(max_column_width,
+                                           max(klen, len(str(value))))
                         if (align == ALIGN_NUMBERS_RIGHT and
                                 do_align == ALIGN_RIGHT) or (
                                     align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT and
@@ -197,12 +202,15 @@ def format_table(table,
                     if val is not None:
                         if (use_aligns and align_cols[i] == ALIGN_RIGHT
                            ) or align == ALIGN_RIGHT:
-                            r = str(val).rjust(key_lengths[i])
+                            r = str(val)[:max_column_width].rjust(
+                                key_lengths[i])
                         elif (use_aligns and align_cols[i] == ALIGN_LEFT
                              ) or align == ALIGN_LEFT:
-                            r = str(val).ljust(key_lengths[i])
+                            r = str(val)[:max_column_width].ljust(
+                                key_lengths[i])
                         else:
-                            r = str(val).center(key_lengths[i])
+                            r = str(val)[:max_column_width].center(
+                                key_lengths[i])
                     else:
                         r = ' ' * key_lengths[i]
                     if fmt == FORMAT_GENERATOR_COLS:
@@ -231,7 +239,8 @@ def make_table(table,
                tablefmt='simple',
                headers=None,
                align=ALIGN_NUMBERS_RIGHT,
-               column_width=COLUMN_WIDTH_CALC):
+               column_width=COLUMN_WIDTH_CALC,
+               max_column_width=None):
     '''
     Generates ready-to-output table
 
@@ -244,10 +253,11 @@ def make_table(table,
     '''
     if tablefmt == 'raw':
         h, t = format_table(table,
-                         fmt=FORMAT_RAW,
-                         headers=headers,
-                         align=align,
-                         column_width=column_width)
+                            fmt=FORMAT_RAW,
+                            headers=headers,
+                            align=align,
+                            column_width=column_width,
+                            max_column_width=max_column_width)
         return h + '\n' + '-' * len(h) + '\n' + t
     else:
         if tablefmt == 'simple':
@@ -272,6 +282,7 @@ def make_table(table,
                          headers=headers,
                          align=align,
                          column_width=column_width,
+                         max_column_width=max_column_width,
                          separator=separator,
                          body_sep_fill=body_sep_fill,
                          body_sep=body_sep)
