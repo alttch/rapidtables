@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 FORMAT_RAW = 0
 FORMAT_GENERATOR = 1
@@ -59,6 +59,7 @@ def format_table(table,
                 is not None to guess at good column widths
             list or tuple of integers - use the specified widths for each
             column
+        max_column_width: maximum column width (default: None - unlimited)
         generate_header: True (default) - create and return header
         body_sep: char to use as body separator (default: None)
         body_sep_fill: string used to fill body separator to next col
