@@ -99,7 +99,7 @@ Align columns:
 
 To predefine aligns, set align to tuple or list:
 
-    *align=(rapidtables.ALIGN_LEFT, rapidtables.ALIGN_RIGHT, ....)*
+    align=(rapidtables.ALIGN_LEFT, rapidtables.ALIGN_RIGHT, ....)
 
 number of items in list must match number of columns in table.
 
