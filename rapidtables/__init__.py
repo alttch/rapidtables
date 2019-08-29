@@ -68,6 +68,7 @@ def format_table(table,
         (header, body) if generate_header is True and body_sep is None
         (header, body sep., body) if generate_header is True and body_sep is
                                     not None
+        None if table data is empty
 
         if fmt is set to FORMAT_GENERATOR or FORMAT_GENERATOR_COLS, body is
         returned as generator of strings or generator of tuples
