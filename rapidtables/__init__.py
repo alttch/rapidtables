@@ -111,7 +111,7 @@ def format_table(table,
                     if generate_header:
                         hklen = len(headers[ki]) if headers else len(k)
                     klen = 0
-                for ri, r in enumerate(table):
+                for r in table:
                     value = r.get(k)
                     if value is not None:
                         if dig_colwidth:
