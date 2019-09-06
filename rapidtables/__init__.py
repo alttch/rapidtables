@@ -258,7 +258,7 @@ def format_table(table,
                     else:
                         row += format_col()
                 if multiline == MULTILINE_EXTENDED_INFO:
-                    yield (True, row)
+                    yield True, row
                 else:
                     yield row
                 if multiline != MULTILINE_DENY and xrow:
