@@ -2,15 +2,12 @@
 
 # for testing only, make sure it uses current rapidtables
 import sys
-from pathlib import Path
-sys.path.insert(0, Path().absolute().parent.as_posix())
+# for Python 2 tests - w/o Path
+import os
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
 
 # if you need to keep strict column ordering, use OrderedDict for the rows
 data = [{
-    'name': 'Mike',
-    'salary': None,
-    'job': 'Student'
-}, {
     'name': 'John',
     'salary': 2000,
     'job': 'DevOps'
@@ -20,7 +17,7 @@ data = [{
     'job': 'Architect'
 }, {
     'name': 'Diana',
-    'salary': 'N/A',
+    'salary': None,
     'job': 'Student'
 }, {
     'name': 'Ken',
@@ -67,4 +64,6 @@ print('')
 print_table(data, tablefmt='md', align=ALIGN_CENTER)
 print('')
 print_table(data, tablefmt='rst', align=ALIGN_RIGHT)
+print('')
+print_table(data, tablefmt='rstgrid')
 print('')

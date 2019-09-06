@@ -116,44 +116,65 @@ table = rapidtables.make_table(data, tablefmt='raw')
 ```
 name  salary  job
 -----------------------
-John    2000  DevOps
-Jack    2500  Architect
-Ken     1800  Q/A
+John     2000  DevOps
+Jack     2500  Architect
+Diana          Student
+Ken      1800  Q/A
 ```
 
 ```python
 table = rapidtables.make_table(data, tablefmt='simple')
 ```
 ```
-name  salary  job
-----  ------  ---------
-John    2000  DevOps
-Jack    2500  Architect
-Ken     1800  Q/A
+name   salary  job
+----   ------  ---------
+John     2000  DevOps
+Jack     2500  Architect
+Diana          Student
+Ken      1800  Q/A
 ``` 
 
 ```python
 table = rapidtables.make_table(data, tablefmt='md') # Markdown
 ```
 ```
-| name | salary | job       |
-|------|--------|-----------|
-| John |   2000 | DevOps    |
-| Jack |   2500 | Architect |
-| Ken  |   1800 | Q/A       |
+| name  | salary | job       |
+|-------|--------|-----------|
+| John  |   2000 | DevOps    |
+| Jack  |   2500 | Architect |
+| Diana |        | Student   |
+| Ken   |   1800 | Q/A       |
 ```
 
 ```python
-table = rapidtables.make_table(data, tablefmt='rst') # reStructured Text
+table = rapidtables.make_table(data, tablefmt='rst') # reStructured, simple
 ```
 ```
-====  ======  =========
-name  salary  job
-====  ======  =========
-John    2000  DevOps
-Jack    2500  Architect
-Ken     1800  Q/A
-====  ======  =========
+=====  ======  =========
+name   salary  job
+=====  ======  =========
+John     2000  DevOps
+Jack     2500  Architect
+Diana          Student
+Ken      1800  Q/A
+=====  ======  =========
+```
+
+```python
+table = rapidtables.make_table(data, tablefmt='rstgrid') # reStructured, grid
+```
+```
++-------+--------+-----------+
+| name  | salary | job       |
++=======+========+===========+
+| John  |   2000 | DevOps    |
++-------+--------+-----------+
+| Jack  |   2500 | Architect |
++-------+--------+-----------+
+| Diana |        | Student   |
++-------+--------+-----------+
+| Ken   |   1800 | Q/A       |
++-------+--------+-----------+
 ```
 
 ### print_table
