@@ -18,6 +18,11 @@ COLUMN_HOMOGENEOUS_WIDTH_CALC = 1
 _TABLEFMT_SIMPLE = 1
 _TABLEFMT_MD = 2
 _TABLEFMT_RST = 3
+_TABLEFMT_RSTGRID = 4
+
+MULTILINE_DENY = 0
+MULTILINE_ALLOW = 1
+MULTILINE_EXTENDED_INFO = 2
 
 
 def format_table(table,
@@ -28,6 +33,7 @@ def format_table(table,
                  column_width=COLUMN_WIDTH_CALC,
                  max_column_width=None,
                  generate_header=True,
+                 multiline=MULTILINE_DENY,
                  body_sep=None,
                  body_sep_fill='  '):
     '''
@@ -61,6 +67,17 @@ def format_table(table,
             column
         max_column_width: maximum column width (default: None - unlimited)
         generate_header: True (default) - create and return header
+        multiline:
+            MULTILINE_DENY - deny multiline strings (parse as-is)
+            MULTILINE_ALLOW - allow multiline strings
+            MULTILINE_EXTENDED_INFO - if FORMAT_GENERATOR or
+                    FORMAT_GENERATOR_COLS is used, rows are returned in format
+
+                        (bool, row)
+
+                    where bool is True if value is row start and False if it's
+                    a helper row with multiline values
+
         body_sep: char to use as body separator (default: None)
         body_sep_fill: string used to fill body separator to next col
 
@@ -115,11 +132,15 @@ def format_table(table,
                     value = r.get(k)
                     if value is not None:
                         if dig_colwidth:
-                            if max_column_width is None:
-                                klen = max(klen, len(str(value)))
+                            if multiline != MULTILINE_DENY and isinstance(
+                                    value, str):
+                                l = max([len(z) for z in value.split('\n')])
                             else:
-                                klen = min(max_column_width,
-                                           max(klen, len(str(value))))
+                                l = len(str(value))
+                            if max_column_width is None:
+                                klen = max(klen, l)
+                            else:
+                                klen = min(max_column_width, max(klen, l))
                         if (align == ALIGN_NUMBERS_RIGHT and
                                 do_align == ALIGN_RIGHT) or (
                                     align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT and
@@ -194,35 +215,71 @@ def format_table(table,
                         header += (ht.center(key_len),)
 
         def body_generator():
+
+            def format_col():
+                if col_value is not None:
+                    if (use_aligns and align_cols[i] == ALIGN_RIGHT
+                       ) or align == ALIGN_RIGHT:
+                        return str(col_value)[:max_column_width].rjust(
+                            key_lengths[i])
+                    elif (use_aligns and
+                          align_cols[i] == ALIGN_LEFT) or align == ALIGN_LEFT:
+                        return str(col_value)[:max_column_width].ljust(
+                            key_lengths[i])
+                    else:
+                        return str(col_value)[:max_column_width].center(
+                            key_lengths[i])
+                else:
+                    return ' ' * key_lengths[i]
+
             for v in table:
                 if fmt == FORMAT_GENERATOR_COLS:
                     row = ()
                 else:
                     row = ''
+
+                if multiline != MULTILINE_DENY: xrow = []
                 for i, k in enumerate(keys):
-                    val = v.get(k)
-                    if val is not None:
-                        if (use_aligns and align_cols[i] == ALIGN_RIGHT
-                           ) or align == ALIGN_RIGHT:
-                            r = str(val)[:max_column_width].rjust(
-                                key_lengths[i])
-                        elif (use_aligns and align_cols[i] == ALIGN_LEFT
-                             ) or align == ALIGN_LEFT:
-                            r = str(val)[:max_column_width].ljust(
-                                key_lengths[i])
-                        else:
-                            r = str(val)[:max_column_width].center(
-                                key_lengths[i])
-                    else:
-                        r = ' ' * key_lengths[i]
+                    col_value = v.get(k)
+                    if multiline != MULTILINE_DENY and isinstance(
+                            col_value, str):
+                        col_vals = col_value.split('\n')
+                        col_value = col_vals[0]
+                        for ci, cv in enumerate(col_vals[1:]):
+                            try:
+                                xrow[ci][k] = cv
+                            except:
+                                xrow.append({k: cv})
                     if fmt == FORMAT_GENERATOR_COLS:
-                        row += (r,)
+                        row += (format_col(),)
                     # FORMAT_GENERATOR
                     elif i < len_keysn:
-                        row += r + separator
+                        row += format_col() + separator
                     else:
-                        row += r
-                yield row
+                        row += format_col()
+                if multiline == MULTILINE_EXTENDED_INFO:
+                    yield (True, row)
+                else:
+                    yield row
+                if multiline != MULTILINE_DENY and xrow:
+                    for x in xrow:
+                        if fmt == FORMAT_GENERATOR_COLS:
+                            row = ()
+                        else:
+                            row = ''
+                        for i, k in enumerate(keys):
+                            col_value = x.get(k)
+                            if fmt == FORMAT_GENERATOR_COLS:
+                                row += (format_col(),)
+                            # FORMAT_GENERATOR
+                            elif i < len_keysn:
+                                row += format_col() + separator
+                            else:
+                                row += format_col()
+                        if multiline == MULTILINE_EXTENDED_INFO:
+                            yield False, row
+                        else:
+                            yield row
 
         # add body
         if fmt == FORMAT_RAW:
@@ -242,7 +299,8 @@ def make_table(table,
                headers=None,
                align=ALIGN_NUMBERS_RIGHT,
                column_width=COLUMN_WIDTH_CALC,
-               max_column_width=None):
+               max_column_width=None,
+               allow_multiline=False):
     '''
     Generates ready-to-output table
 
@@ -250,51 +308,105 @@ def make_table(table,
 
     Args:
         table: list or tuple of dicts
-        tablefmt: raw, simple (default), md (markdown) or rst (reStructuredText)
+        tablefmt: raw, simple (default), md (markdown), rst (reStructuredText)
+                  or rstgrid
         headers: list or tuple of headers (default: dict keys)
+        align: same as for format_table
+        column_width: same as for format_table
+        max_column_width: same as for format_table
+        allow_multiline: True if multiline strings are allowed
     '''
-    if tablefmt == 'raw':
-        h, t = format_table(table,
-                            fmt=FORMAT_RAW,
-                            headers=headers,
-                            align=align,
-                            column_width=column_width,
-                            max_column_width=max_column_width)
-        return h + '\n' + '-' * len(h) + '\n' + t
-    else:
-        if tablefmt == 'simple':
-            body_sep = '-'
-            separator = '  '
-            body_sep_fill = '  '
-            tfmt = _TABLEFMT_SIMPLE
-        elif tablefmt == 'md':
-            body_sep = '-'
-            separator = ' | '
-            body_sep_fill = '-|-'
-            tfmt = _TABLEFMT_MD
-        elif tablefmt == 'rst':
-            body_sep = '='
-            separator = '  '
-            body_sep_fill = '  '
-            tfmt = _TABLEFMT_RST
+    if table:
+        if tablefmt == 'raw':
+            h, t = format_table(table,
+                                fmt=FORMAT_RAW,
+                                headers=headers,
+                                align=align,
+                                column_width=column_width,
+                                max_column_width=max_column_width,
+                                multiline=MULTILINE_ALLOW
+                                if allow_multiline else MULTILINE_DENY)
+            return h + '\n' + '-' * len(h) + '\n' + t
         else:
-            raise RuntimeError('table format not supported')
-        t = format_table(table,
-                         fmt=FORMAT_GENERATOR,
-                         headers=headers,
-                         align=align,
-                         column_width=column_width,
-                         max_column_width=max_column_width,
-                         separator=separator,
-                         body_sep_fill=body_sep_fill,
-                         body_sep=body_sep)
-        if tfmt == _TABLEFMT_MD:
-            h = '|-' + t[1] + '-|\n| '
-            return '| ' + t[0] + ' |\n' + h + ' |\n| '.join(t[2]) + ' |'
-        elif tfmt == _TABLEFMT_RST:
-            return t[1] + '\n' + t[0] + '\n' + t[1] + '\n' + '\n'.join(
-                t[2]) + '\n' + t[1]
-        if tfmt == _TABLEFMT_SIMPLE:
+            if tablefmt == 'simple':
+                body_sep = '-'
+                separator = '  '
+                body_sep_fill = '  '
+                tfmt = _TABLEFMT_SIMPLE
+                fmt = FORMAT_GENERATOR
+                multiline = MULTILINE_ALLOW if \
+                        allow_multiline else MULTILINE_DENY
+            elif tablefmt == 'md':
+                body_sep = '-'
+                separator = ' | '
+                body_sep_fill = '-|-'
+                tfmt = _TABLEFMT_MD
+                fmt = FORMAT_GENERATOR
+                multiline = MULTILINE_ALLOW if \
+                        allow_multiline else MULTILINE_DENY
+            elif tablefmt == 'rst':
+                body_sep = '='
+                separator = '  '
+                body_sep_fill = '  '
+                tfmt = _TABLEFMT_RST
+                fmt = FORMAT_GENERATOR
+                multiline = MULTILINE_ALLOW if \
+                        allow_multiline else MULTILINE_DENY
+            elif tablefmt == 'rstgrid':
+                t = format_table(table,
+                                 fmt=FORMAT_GENERATOR_COLS,
+                                 headers=headers,
+                                 align=align,
+                                 column_width=column_width,
+                                 max_column_width=max_column_width,
+                                 multiline=MULTILINE_EXTENDED_INFO
+                                 if allow_multiline else MULTILINE_DENY)
+                r1 = ''
+                r2 = ''
+                h = '| '
+                for x in t[0]:
+                    lx = len(x) + 2
+                    r1 += '+' + '-' * lx
+                    r2 += '+' + '=' * lx
+                    h += x + ' | '
+                r1 += '+'
+                r2 += '+'
+                tbody = r2 + '\n'
+                first_row = True
+                for row in t[1]:
+                    if allow_multiline:
+                        is_first = row[0]
+                        row = row[1]
+                    if first_row:
+                        first_row = False
+                    else:
+                        tbody += '\n' + (r1 + '\n') if \
+                                not allow_multiline or is_first else '\n'
+                    tbody += '| '
+                    lr = len(row)
+                    for i, col in enumerate(row):
+                        tbody += col + ' |'
+                        if i < lr:
+                            tbody += ' '
+                return r1 + '\n' + h + '\n' + tbody + '\n' + r1
+            else:
+                raise RuntimeError('table format not supported')
+            t = format_table(table,
+                             fmt=fmt,
+                             headers=headers,
+                             align=align,
+                             column_width=column_width,
+                             max_column_width=max_column_width,
+                             multiline=multiline,
+                             separator=separator,
+                             body_sep_fill=body_sep_fill,
+                             body_sep=body_sep)
+            if tfmt == _TABLEFMT_MD:
+                h = '|-' + t[1] + '-|\n| '
+                return '| ' + t[0] + ' |\n' + h + ' |\n| '.join(t[2]) + ' |'
+            elif tfmt == _TABLEFMT_RST:
+                return t[1] + '\n' + t[0] + '\n' + t[1] + '\n' + '\n'.join(
+                    t[2]) + '\n' + t[1]
             return t[0] + '\n' + t[1] + '\n' + '\n'.join(t[2])
 
 
