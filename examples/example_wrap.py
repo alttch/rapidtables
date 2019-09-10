@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 data = [{
     'rating': 10,
     'job': 'Spiderman'
