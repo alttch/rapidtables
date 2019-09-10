@@ -2,6 +2,9 @@ __author__ = "Altertech"
 __license__ = "MIT"
 __version__ = '0.1.5'
 
+from textwrap import fill
+from itertools import chain
+
 FORMAT_RAW = 0
 FORMAT_GENERATOR = 1
 FORMAT_GENERATOR_COLS = 2
@@ -34,6 +37,7 @@ def format_table(table,
                  max_column_width=None,
                  generate_header=True,
                  multiline=MULTILINE_DENY,
+                 wrap_text=False,
                  body_sep=None,
                  body_sep_fill='  '):
     '''
@@ -77,7 +81,8 @@ def format_table(table,
 
                     where bool is True if value is row start and False if it's
                     a helper row with multiline values
-
+        wrap_text: False (default) - Wrap text to multiple lines if its longer
+         than max_column_width
         body_sep: char to use as body separator (default: None)
         body_sep_fill: string used to fill body separator to next col
 
@@ -92,6 +97,13 @@ def format_table(table,
         returned as generator of strings or generator of tuples
         '''
     if table:
+        if wrap_text:
+            if max_column_width is None:
+                raise RuntimeError("The 'wrap_text' option require the "
+                                   "'max_column_width' to be set as well")
+            if multiline == MULTILINE_DENY:
+                raise RuntimeError("The 'wrap_text' option require the "
+                                   "'multiline' option to be enabled")
         if isinstance(align, int):
             if align == ALIGN_NUMBERS_RIGHT or \
                     align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT:
@@ -244,6 +256,14 @@ def format_table(table,
                     if multiline != MULTILINE_DENY and isinstance(
                             col_value, str):
                         col_vals = col_value.split('\n')
+                        if wrap_text:
+                            """
+                            Iterate over each line and wrap the text,
+                            then combine it all back to a single list.
+                            """
+                            col_vals = list(chain.from_iterable(
+                                [fill(val, max_column_width).splitlines()
+                                 for val in col_vals]))
                         col_value = col_vals[0]
                         for ci, cv in enumerate(col_vals[1:]):
                             try:
@@ -300,7 +320,8 @@ def make_table(table,
                align=ALIGN_NUMBERS_RIGHT,
                column_width=COLUMN_WIDTH_CALC,
                max_column_width=None,
-               allow_multiline=False):
+               allow_multiline=False,
+               wrap_text=False):
     '''
     Generates ready-to-output table
 
@@ -315,6 +336,7 @@ def make_table(table,
         column_width: same as for format_table
         max_column_width: same as for format_table
         allow_multiline: True if multiline strings are allowed
+        wrap_text: False (default) - same as format_table
     '''
     if table:
         if tablefmt == 'raw':
@@ -325,7 +347,8 @@ def make_table(table,
                                 column_width=column_width,
                                 max_column_width=max_column_width,
                                 multiline=MULTILINE_ALLOW
-                                if allow_multiline else MULTILINE_DENY)
+                                if allow_multiline else MULTILINE_DENY,
+                                wrap_text=wrap_text)
             return h + '\n' + '-' * len(h) + '\n' + t
         else:
             if tablefmt == 'simple':
@@ -360,7 +383,8 @@ def make_table(table,
                                  column_width=column_width,
                                  max_column_width=max_column_width,
                                  multiline=MULTILINE_EXTENDED_INFO
-                                 if allow_multiline else MULTILINE_DENY)
+                                 if allow_multiline else MULTILINE_DENY,
+                                 wrap_text=wrap_text)
                 r1 = ''
                 r2 = ''
                 h = '| '
@@ -400,7 +424,8 @@ def make_table(table,
                              multiline=multiline,
                              separator=separator,
                              body_sep_fill=body_sep_fill,
-                             body_sep=body_sep)
+                             body_sep=body_sep,
+                             wrap_text=wrap_text)
             if tfmt == _TABLEFMT_MD:
                 h = '|-' + t[1] + '-|\n| '
                 return '| ' + t[0] + ' |\n' + h + ' |\n| '.join(t[2]) + ' |'
