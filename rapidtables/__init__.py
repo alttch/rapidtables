@@ -146,7 +146,9 @@ def format_table(table,
                         if dig_colwidth:
                             if multiline != MULTILINE_DENY and isinstance(
                                     value, str):
-                                l = max([len(z) for z in value.splitlines() or [""]])
+                                l = max([
+                                    len(z) for z in value.splitlines() or [""]
+                                ])
                             else:
                                 l = len(str(value))
                             if max_column_width is None:
@@ -261,9 +263,11 @@ def format_table(table,
                             Iterate over each line and wrap the text,
                             then combine it all back to a single list.
                             """
-                            col_vals = list(chain.from_iterable(
-                                [fill(val, max_column_width).splitlines() or [""]
-                                 for val in col_vals]))
+                            col_vals = list(
+                                chain.from_iterable([
+                                    fill(val, max_column_width).splitlines() or
+                                    [""] for val in col_vals
+                                ]))
                         col_value = col_vals[0]
                         for ci, cv in enumerate(col_vals[1:]):
                             try:
