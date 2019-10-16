@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 
 from textwrap import fill
 from itertools import chain
@@ -97,9 +97,9 @@ def format_table(table,
         if fmt is set to FORMAT_GENERATOR or FORMAT_GENERATOR_COLS, body is
         returned as generator of strings or generator of tuples
         '''
+    if isinstance(table, GeneratorType):
+        table = list(table)
     if table:
-        if isinstance(table, GeneratorType):
-            table = list(table)
         if wrap_text:
             if max_column_width is None:
                 raise RuntimeError("The 'wrap_text' option require the "
