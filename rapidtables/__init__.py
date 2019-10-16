@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.1.9'
+__version__ = '0.1.10'
 
 from textwrap import fill
 from itertools import chain
@@ -392,34 +392,37 @@ def make_table(table,
                                  multiline=MULTILINE_EXTENDED_INFO
                                  if allow_multiline else MULTILINE_DENY,
                                  wrap_text=wrap_text)
-                r1 = ''
-                r2 = ''
-                h = '| '
-                for x in t[0]:
-                    lx = len(x) + 2
-                    r1 += '+' + '-' * lx
-                    r2 += '+' + '=' * lx
-                    h += x + ' | '
-                r1 += '+'
-                r2 += '+'
-                tbody = r2 + '\n'
-                first_row = True
-                for row in t[1]:
-                    if allow_multiline:
-                        is_first = row[0]
-                        row = row[1]
-                    if first_row:
-                        first_row = False
-                    else:
-                        tbody += '\n' + (r1 + '\n') if \
-                                not allow_multiline or is_first else '\n'
-                    tbody += '| '
-                    lr = len(row)
-                    for i, col in enumerate(row):
-                        tbody += col + ' |'
-                        if i < lr:
-                            tbody += ' '
-                return r1 + '\n' + h + '\n' + tbody + '\n' + r1
+                if t:
+                    r1 = ''
+                    r2 = ''
+                    h = '| '
+                    for x in t[0]:
+                        lx = len(x) + 2
+                        r1 += '+' + '-' * lx
+                        r2 += '+' + '=' * lx
+                        h += x + ' | '
+                    r1 += '+'
+                    r2 += '+'
+                    tbody = r2 + '\n'
+                    first_row = True
+                    for row in t[1]:
+                        if allow_multiline:
+                            is_first = row[0]
+                            row = row[1]
+                        if first_row:
+                            first_row = False
+                        else:
+                            tbody += '\n' + (r1 + '\n') if \
+                                    not allow_multiline or is_first else '\n'
+                        tbody += '| '
+                        lr = len(row)
+                        for i, col in enumerate(row):
+                            tbody += col + ' |'
+                            if i < lr:
+                                tbody += ' '
+                    return r1 + '\n' + h + '\n' + tbody + '\n' + r1
+                else:
+                    return None
             else:
                 raise RuntimeError('table format not supported')
             t = format_table(table,
@@ -433,17 +436,20 @@ def make_table(table,
                              body_sep_fill=body_sep_fill,
                              body_sep=body_sep,
                              wrap_text=wrap_text)
-            if tfmt == _TABLEFMT_MD:
-                h = '|-' + t[1] + '-|\n| '
-                return '| ' + t[0] + ' |\n' + h + ' |\n| '.join(t[2]) + ' |'
-            elif tfmt == _TABLEFMT_RST:
-                return t[1] + '\n' + t[0] + '\n' + t[1] + '\n' + '\n'.join(
-                    t[2]) + '\n' + t[1]
-            return t[0] + '\n' + t[1] + '\n' + '\n'.join(t[2])
+            if t:
+                if tfmt == _TABLEFMT_MD:
+                    h = '|-' + t[1] + '-|\n| '
+                    return '| ' + t[0] + ' |\n' + h + ' |\n| '.join(t[2]) + ' |'
+                elif tfmt == _TABLEFMT_RST:
+                    return t[1] + '\n' + t[0] + '\n' + t[1] + '\n' + '\n'.join(
+                        t[2]) + '\n' + t[1]
+                return t[0] + '\n' + t[1] + '\n' + '\n'.join(t[2])
 
 
 def print_table(*args, **kwargs):
     '''
     Same as make_table but prints results to stdout
     '''
-    print(make_table(*args, **kwargs))
+    t = make_table(*args, **kwargs)
+    if t:
+        print(t)
