@@ -23,6 +23,9 @@ _TABLEFMT_SIMPLE = 1
 _TABLEFMT_MD = 2
 _TABLEFMT_RST = 3
 _TABLEFMT_RSTGRID = 4
+_TABLEFMT_ASCIIDOC = 5
+
+_ASCIIDOC_ALIGNS = {ALIGN_LEFT: '<', ALIGN_CENTER: '^', ALIGN_RIGHT: '>'}
 
 MULTILINE_DENY = 0
 MULTILINE_ALLOW = 1
@@ -40,7 +43,9 @@ def format_table(table,
                  multiline=MULTILINE_DENY,
                  wrap_text=False,
                  body_sep=None,
-                 body_sep_fill='  '):
+                 body_sep_fill='  ',
+                 use_aligns=True,
+                 return_aligns=False):
     '''
     Format list of dicts to table
 
@@ -86,6 +91,8 @@ def format_table(table,
          than max_column_width
         body_sep: char to use as body separator (default: None)
         body_sep_fill: string used to fill body separator to next col
+        use_aligns: use provided or digged align info to format cells
+        return_aligns: return align info
 
     Returns:
         body if generate_header is False and body_sep is None
@@ -93,6 +100,8 @@ def format_table(table,
         (header, body sep., body) if generate_header is True and body_sep is
                                     not None
         None if table data is empty
+
+        if return_aligns is True, align_cols info is returned before body
 
         if fmt is set to FORMAT_GENERATOR or FORMAT_GENERATOR_COLS, body is
         returned as generator of strings or generator of tuples
@@ -111,14 +120,13 @@ def format_table(table,
             if align == ALIGN_NUMBERS_RIGHT or \
                     align == ALIGN_HOMOGENEOUS_NUMBERS_RIGHT:
                 dig_aligns = True
-                use_aligns = True
                 align_cols = ()
             else:
                 dig_aligns = False
                 use_aligns = False
+                align_cols = ()
         else:
             align_cols = align
-            use_aligns = True
             dig_aligns = False
         keys = tuple(table[0])
         len_keysn = len(keys) - 1
@@ -209,11 +217,13 @@ def format_table(table,
                             header += ht.ljust(key_len) + separator
                         else:
                             header += ht.ljust(key_len)
-                    else:
+                    elif use_aligns or align == ALIGN_CENTER:
                         if i < len_keysn:
                             header += ht.center(key_len) + separator
                         else:
                             header += ht.center(key_len)
+                    else:
+                        header += ht
             else:
                 header = ()
                 if need_body_sep:
@@ -228,8 +238,10 @@ def format_table(table,
                     elif (use_aligns and
                           align_cols[i] == ALIGN_LEFT) or align == ALIGN_LEFT:
                         header += (ht.ljust(key_len),)
-                    else:
+                    elif use_aligns or align == ALIGN_CENTER:
                         header += (ht.center(key_len),)
+                    else:
+                        header += (ht,)
 
         def body_generator():
 
@@ -243,9 +255,11 @@ def format_table(table,
                           align_cols[i] == ALIGN_LEFT) or align == ALIGN_LEFT:
                         return str(col_value)[:max_column_width].ljust(
                             key_lengths[i])
-                    else:
+                    elif use_aligns or align == ALIGN_CENTER:
                         return str(col_value)[:max_column_width].center(
                             key_lengths[i])
+                    else:
+                        return str(col_value)[:max_column_width]
                 else:
                     return ' ' * key_lengths[i]
 
@@ -314,11 +328,13 @@ def format_table(table,
         else:
             result = body_generator()
         if generate_header and body_sep:
-            return (header, bsep, result)
+            return (header, bsep, align_cols, result) if \
+                    return_aligns else (header, bsep, result)
         elif generate_header:
-            return (header, result)
+            return (header, align_cols, result) if \
+                    return_aligns else (header, result)
         else:
-            return result
+            return (align_cols, result) if return_aligns else result
 
 
 def make_table(table,
@@ -337,7 +353,7 @@ def make_table(table,
     Args:
         table: list or tuple of dicts
         tablefmt: raw, simple (default), md (markdown), rst (reStructuredText)
-                  or rstgrid
+                  rstgrid or asciidoc
         headers: list or tuple of headers (default: dict keys)
         align: same as for format_table
         column_width: same as for format_table
@@ -382,6 +398,28 @@ def make_table(table,
                 fmt = FORMAT_GENERATOR
                 multiline = MULTILINE_ALLOW if \
                         allow_multiline else MULTILINE_DENY
+            elif tablefmt == 'asciidoc':
+                t = format_table(table,
+                                 fmt=FORMAT_GENERATOR_COLS,
+                                 headers=headers,
+                                 align=align,
+                                 column_width=column_width,
+                                 max_column_width=max_column_width,
+                                 multiline=MULTILINE_DENY,
+                                 use_aligns=False,
+                                 return_aligns=True)
+                if t:
+                    tbody = '[%header,cols="' + ','.join(
+                        [_ASCIIDOC_ALIGNS[a] for a in t[1]]) + '"]\n|===\n'
+                    for h in t[0]:
+                        tbody += '|' + h + '\n'
+                    for row in t[2]:
+                        tbody += '\n'
+                        for c in row:
+                            tbody += '|' + c + '\n'
+                    return tbody + '|==='
+                else:
+                    return None
             elif tablefmt == 'rstgrid':
                 t = format_table(table,
                                  fmt=FORMAT_GENERATOR_COLS,
