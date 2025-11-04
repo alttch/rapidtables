@@ -1,6 +1,6 @@
 __author__ = "Altertech"
 __license__ = "MIT"
-__version__ = '0.1.11'
+__version__ = '0.1.12'
 
 from textwrap import fill
 from itertools import chain
